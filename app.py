@@ -420,8 +420,7 @@ with tabs[2]:
     model_path = "model-facedetect.pth"
     download_from_gdrive(model_file_id, model_path)
 
-    state_dict = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
-    model.load_state_dict(state_dict)
+    model = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
     model.eval()
 
     transform = transforms.Compose([
