@@ -5,8 +5,8 @@ st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="w
 gradient_css = """
 <style>
 .stApp {
-    background: #191654;
-    background: linear-gradient(90deg, rgba(25, 22, 84, 1) 0%, rgba(60, 145, 128, 1) 50%, rgba(25, 22, 84, 1) 100%);
+     background: #2A5989;
+    background: radial-gradient(circle, rgba(42, 89, 137, 1) 0%, rgba(174, 183, 203, 1) 50%, rgba(107, 166, 183, 1) 100%);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
