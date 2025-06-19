@@ -10,7 +10,7 @@ st.markdown(
     <style>
     .stTabs [data-baseweb="tab-list"] {
         justify-content: center;
-        margin-top: -70px;
+        margin-top: -90px;
     }
     </style>
     """,
