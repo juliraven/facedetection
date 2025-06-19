@@ -118,82 +118,51 @@ with tabs[2]:
     from PIL import Image
     import streamlit as st
 
-    def download_from_gdrive(file_id, output_path):
-        url = f"https://drive.google.com/uc?id={file_id}"
-        if not os.path.exists(output_path):
-            gdown.download(url, output_path, quiet=False)
+    #def download_from_gdrive(file_id, output_path):
+        #url = f"https://drive.google.com/uc?id={file_id}"
+        #if not os.path.exists(output_path):
+            #gdown.download(url, output_path, quiet=False)
 
-    model_file_id = "1HYWwhDrrUvL66EtmWRn3kycHYdWN1Bzz"
-    model_path = "model-facedetect.pth"
+    #model_file_id = "1HYWwhDrrUvL66EtmWRn3kycHYdWN1Bzz"
+    #model_path = "model-facedetect.pth"
 
-    download_from_gdrive(model_file_id, model_path)
+    #download_from_gdrive(model_file_id, model_path)
 
-    model = fasterrcnn_resnet50_fpn(pretrained=False)
-    num_classes = 2
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    #model = fasterrcnn_resnet50_fpn(pretrained=False)
+    #num_classes = 2
+    #in_features = model.roi_heads.box_predictor.cls_score.in_features
+    #model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
-    state_dict = torch.load(model_path, map_location=torch.device('cpu'))
-    model.load_state_dict(state_dict)
-    model.eval()
+    #state_dict = torch.load(model_path, map_location=torch.device('cpu'))
+    #model.load_state_dict(state_dict)
+    #model.eval()
 
-    transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.Resize((256, 256)),
-    transforms.ToTensor()
-    ])
+    #transform = transforms.Compose([
+    #transforms.ToPILImage(),
+    #transforms.Resize((256, 256)),
+    #transforms.ToTensor()
+    #])
 
-    def detect_faces(image_np):
-        image_tensor = transform(image_np).unsqueeze(0)
-        with torch.no_grad():
-            prediction = model(image_tensor)[0]
-        return prediction
+    #def detect_faces(image_np):
+     #   image_tensor = transform(image_np).unsqueeze(0)
+      #  with torch.no_grad():
+       #     prediction = model(image_tensor)[0]
+        #return prediction
 
-    uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
-        image_np = np.array(image)
-        pred = detect_faces(image_np)
+    #uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png"])
+    #if uploaded_file is not None:
+     #   image = Image.open(uploaded_file).convert("RGB")
+      #  image_np = np.array(image)
+       # pred = detect_faces(image_np)
 
-        for box, score in zip(pred['boxes'], pred['scores']):
-            if score > 0.5:
-                x1, y1, x2, y2 = box.int().numpy()
-                cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        st.image(image_np, caption="Wykryte twarze", use_column_width=True)
+        #for box, score in zip(pred['boxes'], pred['scores']):
+         #   if score > 0.5:
+          #      x1, y1, x2, y2 = box.int().numpy()
+           #     cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        #st.image(image_np, caption="Wykryte twarze", use_column_width=True)
 
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
-
-    import torch
-    import numpy as np
-    import cv2
-    from PIL import Image
-    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-    from torchvision.models.detection import fasterrcnn_resnet50_fpn
-    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-
-    @st.cache_resource
-    def load_model():
-        model = fasterrcnn_resnet50_fpn(pretrained=False)
-        in_features = model.roi_heads.box_predictor.cls_score.in_features
-        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes=2)
-        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device('cpu')))
-        model.eval()
-        return model
-
-    model = load_model()
-
-    transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((256, 256)),
-        transforms.ToTensor()
-        ])
-
-    def detect_faces(image_np):
-        image_tensor = transform(image_np).unsqueeze(0)
-        with torch.no_grad():
-            prediction = model(image_tensor)[0]
-        return prediction
 
     class FaceDetector(VideoTransformerBase):
         def transform(self, frame):
@@ -207,6 +176,6 @@ with tabs[3]:
                     cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
             return img
 
-    webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
+    #webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
 
 
