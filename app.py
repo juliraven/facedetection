@@ -19,7 +19,7 @@ st.markdown(
     """
     <style>
     .emoji-top {
-        margin-top: -10px; 
+        margin-top: 0px; 
     }
     </style>
     
