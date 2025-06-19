@@ -468,18 +468,34 @@ with tabs[2]:
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
-    #class FaceDetector(VideoTransformerBase):
-     #   def transform(self, frame):
-      #      img = frame.to_ndarray(format="bgr24")
-       #     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        #    pred = detect_faces(img_rgb)
+    class FaceDetector(VideoTransformerBase):
+        def transform(self, frame):
+            img = frame.to_ndarray(format="bgr24")
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        
+            original_h, original_w = img.shape[:2]
+            img_resized = cv2.resize(img_rgb, (256, 256))
+            image_tensor = transform(img_resized).unsqueeze(0)
+        
+            with torch.no_grad():
+                prediction = model(image_tensor)[0]
+        
+            scale_x = original_w / 256
+            scale_y = original_h / 256
+        
+            for box, score in zip(prediction['boxes'], prediction['scores']):
+                if score > 0.5:
+                    x1, y1, x2, y2 = box.tolist()
+                    x1 = int(x1 * scale_x)
+                    x2 = int(x2 * scale_x)
+                    y1 = int(y1 * scale_y)
+                    y2 = int(y2 * scale_y)
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        
+            return img
 
-         #   for box, score in zip(pred['boxes'], pred['scores']):
-          #      if score > 0.5:
-           #         x1, y1, x2, y2 = box.int().numpy()
-            #        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            #return img
+    webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
 
-    #webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
+
 
 
