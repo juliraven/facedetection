@@ -37,6 +37,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+code = """
+def hello():
+    print("Hello, world!")
+"""
+
+st.code(code, language='python')
+
 st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
