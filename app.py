@@ -48,17 +48,17 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)) {
         background: linear-gradient(
             135deg,
-            rgba(180, 68, 251, 0.25),
-            rgba(45, 3, 94, 0.2),
-            rgba(32, 33, 37, 0.1)
+            rgba(140, 48, 201, 0.35),  /* ciemniejszy i bardziej kryjący fiolet */
+            rgba(30, 2, 80, 0.3),      /* ciemniejszy fiolet */
+            rgba(20, 22, 27, 0.15)     /* ciemniejszy grafit */
         );
-        border: 1px solid rgba(180, 68, 251, 0.4);
+        border: 1px solid rgba(140, 48, 201, 0.5);
         border-radius: 20px;
         padding: 24px;
         box-shadow:
-            0 0 10px rgba(180, 68, 251, 0.25),
-            0 4px 20px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(14px) brightness(1.1);
+            0 0 10px rgba(140, 48, 201, 0.35),
+            0 4px 20px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(14px) brightness(0.9);
         background-blend-mode: overlay;
         transition: all 0.3s ease-in-out;
     }
@@ -66,8 +66,8 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)):hover {
         transform: translateY(-6px);
         box-shadow:
-            0 0 18px rgba(180, 68, 251, 0.4),
-            0 8px 30px rgba(0, 0, 0, 0.4);
+            0 0 18px rgba(140, 48, 201, 0.5),
+            0 8px 30px rgba(0, 0, 0, 0.45);
     }
     </style>
     """,
