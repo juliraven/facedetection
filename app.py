@@ -5,6 +5,18 @@ st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="w
 
 st.title("Wykrywanie i rozpoznwanie twarzy")
 
+st.markdown(
+    """
+    <style>
+    .stTabs [data-baseweb="tab-list"] {
+        justify-content: center;
+        margin-top: -70px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 tabs = st.tabs(["Opis projektu", "Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
 
 with tabs[0]:
