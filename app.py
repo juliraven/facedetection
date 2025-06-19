@@ -35,7 +35,7 @@ with tabs[3]:
     st.markdown('')
 
     import torch
-    from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
+    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
     from torchvision import transforms
     import numpy as np
     import cv2
