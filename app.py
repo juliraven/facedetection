@@ -1,137 +1,57 @@
 
 import streamlit as st
 
-st.set_page_config(page_title="Wizualizacja danych - streamlit", layout="wide")
+st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
-page_bg_img_sidebar = """
-<style>
-/* Ustawienie szerokości sidebaru */
-section[data-testid="stSidebar"] {
-    width: 340px !important;
-    min-width: 340px !important;
-    max-width: 340px !important;
-    display: flex;
-    align-items: center;       /* Wyśrodkowanie w pionie */
-    justify-content: center;   /* Wyśrodkowanie w poziomie */
-    flex-direction: column;
-    height: 100vh;             /* Wysokość całego widoku */
-    padding-top: 10px;
-}
+st.title("Wykrywanie i rozpoznwanie twarzy")
 
-/* Styl samego wnętrza sidebaru */
-[data-testid="stSidebar"] {
-    background: linear-gradient(
-        135deg,
-        rgba(32, 33, 37, 0.6),
-        rgba(45, 3, 94, 0.5),
-        rgba(180, 68, 251, 0.4)
-    );
-    border: 1px solid rgba(180, 68, 251, 0.3);
-    border-radius: 0px;
-    padding: 24px;
-    width: 100%;
-    box-shadow:
-        0 0 10px rgba(180, 68, 251, 0.25),
-        0 4px 16px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(12px) brightness(1.05);
-    background-blend-mode: overlay;
-    transition: none;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;  /* Wyśrodkowanie zawartości */
-}
+tabs = st.tabs(["Opis projektu", "Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
 
-/* Główna treść */
-section.main > div {
-    padding-left: 220px !important;
-}
+with tabs[0]:
+    st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
+    st.markdown('')
 
-/* Nagłówek przezroczysty */
-header[data-testid="stHeader"] {
-    background-color: rgba(0, 0, 0, 0);
-}
+with tabs[1]:
+    st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy</h1>", unsafe_allow_html=True)
 
-/* Tło strony */
-body {
-    background-color: #202125;
-}
-</style>
-"""
+with tabs[2]:
+    st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
 
-st.markdown(page_bg_img_sidebar, unsafe_allow_html=True)
+with tabs[3]:
+    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
 
-st.markdown(
-    """
-    <style>
-    .stTabs [data-baseweb="tab-list"] {
-        justify-content: center;
-        margin-top: -70px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    import streamlit as st
+    import torch
+    from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
+    from torchvision import transforms
+    import numpy as np
+    import cv2
+    from PIL import Image
+    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
-tab1, tab2, tab3, tab4 = st.tabs(["Ludność", "Długość życia i śmiertelność", "Marvel", "Schemat kodu"])
+    @st.cache_resource
+    def load_model():
+        model = fasterrcnn_resnet50_fpn(pretrained=False)
+        in_features = model.roi_heads.box_predictor.cls_score.in_features
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
+        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device("cpu")))
+        model.eval()
+        return model
 
-with tab1:
+    model = load_model()
 
-    st.markdown("<h1 style='text-align: center;'>📊 Ludność świata na przestrzeni lat</h1>", unsafe_allow_html=True)
-    st.markdown(' ')
+    transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize((256, 256)),
+        transforms.ToTensor()
+        ])
 
+    def detect_faces(image_np):
+        image_tensor = transform(image_np).unsqueeze(0)
+        with torch.no_grad():
+            prediction = model(image_tensor)[0]
+        return prediction
 
-
-
-
-
-
-
-
-'''
-import streamlit as st
-import torch
-from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
-from torchvision import transforms
-import numpy as np
-import cv2
-from PIL import Image
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-
-# ======= MODEL LOADING =======
-@st.cache_resource
-def load_model():
-    model = fasterrcnn_resnet50_fpn(pretrained=False)
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
-    model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device("cpu")))
-    model.eval()
-    return model
-
-model = load_model()
-
-# ======= TRANSFORM IMAGE =======
-transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.Resize((256, 256)),
-    transforms.ToTensor()
-])
-
-def detect_faces(image_np):
-    image_tensor = transform(image_np).unsqueeze(0)
-    with torch.no_grad():
-        prediction = model(image_tensor)[0]
-    return prediction
-
-
-# ======= STREAMLIT UI =======
-st.title("📷 Real-Time Face Detection App")
-
-mode = st.radio("Wybierz tryb:", ["🖼️ Wgraj zdjęcie", "📹 Kamera (real-time)"])
-
-# ======= IMAGE UPLOAD =======
-if mode == "🖼️ Wgraj zdjęcie":
     uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
@@ -145,9 +65,40 @@ if mode == "🖼️ Wgraj zdjęcie":
 
         st.image(image_np, caption="Wykryte twarze", use_column_width=True)
 
+with tabs[4]:
+    st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
-# ======= WEBCAM STREAM =======
-elif mode == "📹 Kamera (real-time)":
+    import streamlit as st
+    import torch
+    from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
+    from torchvision import transforms
+    import numpy as np
+    import cv2
+    from PIL import Image
+    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+
+    @st.cache_resource
+    def load_model():
+        model = fasterrcnn_resnet50_fpn(pretrained=False)
+        in_features = model.roi_heads.box_predictor.cls_score.in_features
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
+        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device("cpu")))
+        model.eval()
+        return model
+
+    model = load_model()
+
+    transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize((256, 256)),
+        transforms.ToTensor()
+        ])
+
+    def detect_faces(image_np):
+        image_tensor = transform(image_np).unsqueeze(0)
+        with torch.no_grad():
+            prediction = model(image_tensor)[0]
+        return prediction
 
     class FaceDetector(VideoTransformerBase):
         def transform(self, frame):
@@ -163,4 +114,4 @@ elif mode == "📹 Kamera (real-time)":
 
     webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
 
-'''
+
