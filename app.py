@@ -447,7 +447,7 @@ with tabs[2]:
             if score > 0.5:
                 x1, y1, x2, y2 = box.int().numpy()
                 cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        st.image(image_np, caption="Wykryte twarze", use_column_width=True)
+        st.image(image_np, caption="Wykryte twarze", use_container_width=True)
 
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
