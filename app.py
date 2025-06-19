@@ -42,14 +42,51 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)) {
+        background: linear-gradient(
+            135deg,
+            rgba(180, 68, 251, 0.25),
+            rgba(45, 3, 94, 0.2),
+            rgba(32, 33, 37, 0.1)
+        );
+        border: 1px solid rgba(180, 68, 251, 0.4);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow:
+            0 0 10px rgba(180, 68, 251, 0.25),
+            0 4px 20px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(14px) brightness(1.1);
+        background-blend-mode: overlay;
+        transition: all 0.3s ease-in-out;
+    }
+
+    div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)):hover {
+        transform: translateY(-6px);
+        box-shadow:
+            0 0 18px rgba(180, 68, 251, 0.4),
+            0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 tabs = st.tabs(["Opis projektu", "Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
 
 with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-    with st.container():
-        st.write('Celem naszego projektu było zbudowanie sieci neuronowej, która potrafi wykrywać ludzkie twarze na obrazach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy.')
+    styled_container = st.container()
+        st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
+
+        with styled_container:
+            st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
+            st.write('Celem naszego projektu było zbudowanie sieci neuronowej, która potrafi wykrywać ludzkie twarze na obrazach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy.')
 
 
 with tabs[1]:
