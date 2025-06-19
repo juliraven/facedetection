@@ -34,20 +34,21 @@ with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-    import torch
-    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
     from torchvision import transforms
     import numpy as np
     import cv2
     from PIL import Image
     from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+    import torch
+    from torchvision.models.detection import fasterrcnn_resnet50_fpn
+    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
     @st.cache_resource
     def load_model():
         model = fasterrcnn_resnet50_fpn(pretrained=False)
         in_features = model.roi_heads.box_predictor.cls_score.in_features
-        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
-        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device("cpu")))
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes=2)
+        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device('cpu')))
         model.eval()
         return model
 
@@ -81,21 +82,20 @@ with tabs[3]:
 with tabs[4]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
-    import streamlit as st
     import torch
-    from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
-    from torchvision import transforms
     import numpy as np
     import cv2
     from PIL import Image
     from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+    from torchvision.models.detection import fasterrcnn_resnet50_fpn
+    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
     @st.cache_resource
     def load_model():
         model = fasterrcnn_resnet50_fpn(pretrained=False)
         in_features = model.roi_heads.box_predictor.cls_score.in_features
-        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
-        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device("cpu")))
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes=2)
+        model.load_state_dict(torch.load("model-facedetect.pth", map_location=torch.device('cpu')))
         model.eval()
         return model
 
