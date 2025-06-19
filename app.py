@@ -273,7 +273,7 @@ plt.show()
             st.image('svg3.svg')
 
         with col4:
-            st.iamge('svg4.svg')
+            st.image('svg4.svg')
         
 
 with tabs[1]:
