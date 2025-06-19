@@ -95,8 +95,24 @@ with tabs[0]:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
 
         st.markdown('# 1. Przygotowanie środowiska i danych')
+        st.markdown('## 1.1 Instalacja i import bibliotek')
         st.markdown("""
 ```python
+!pip install torch torchvision opencv-python matplotlib
+import os
+import json
+import torch
+from torch.utils.data import Dataset, DataLoader, random_split
+import cv2
+import numpy as np
+from torchvision import transforms
+import torchvision
+from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import torch.optim as optim
+from tqdm import tqdm
 """)
 
 with tabs[1]:
