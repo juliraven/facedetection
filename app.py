@@ -93,7 +93,12 @@ with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-    st.markdown("""
+    styled_container = st.container()
+    st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
+    with styled_container:
+        st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
+
+        st.markdown("""
 ```python
 def add(a, b):
     return a + b
