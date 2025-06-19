@@ -1,5 +1,5 @@
-torch
-torchvision
+torch==2.0.1
+torchvision==0.15.2
 opencv-python
 numpy
 Pillow
@@ -7,7 +7,6 @@ streamlit
 streamlit-webrtc
 av
 pandas
-numpy
 plotly
 matplotlib
 streamlit-option-menu
