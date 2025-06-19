@@ -114,6 +114,127 @@ import matplotlib.patches as patches
 import torch.optim as optim
 from tqdm import tqdm
 """)
+        st.amrkdown('## 1.2 Parsowanie pliku adnotacji WIDER Face')
+        st.markdown("""
+```python
+def parse_widerface_annotations(ann_file):
+    annotations = {}
+    with open(ann_file, 'r') as f:
+        lines = f.readlines()
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        if line.endswith('.jpg'):
+            img_path = line
+            i += 1
+            num_faces = int(lines[i].strip())
+            i += 1
+            bboxes = []
+            for _ in range(num_faces):
+                parts = lines[i].strip().split()
+                x, y, w, h = map(int, parts[:4])
+                bboxes.append([x, y, w, h])
+                i += 1
+            annotations[img_path] = bboxes
+        else:
+            i += 1
+    return annotations
+
+ANNOTATIONS_PATH = 'data/wider_face_split/wider_face_train_bbx_gt.txt'
+annotations = parse_widerface_annotations(ANNOTATIONS_PATH)
+print(f'Liczba obrazów: {len(annotations)}')
+print(f'Liczba obrazów z adnotacjami: {len(annotations)}')
+print('Przykład bboxów dla pierwszego obrazu:', list(annotations.values())[0])
+""")
+        st.amrkdown('## 1.3 Załdaowanie datasetu i ramek')
+        st.markdown("""
+```python
+class WiderFaceDataset(Dataset):
+    def __init__(self, images_dir, annotations, transform=None):
+        self.images_dir = images_dir
+        self.annotations = annotations
+        self.transform = transform
+        self.image_files = list(annotations.keys())
+
+    def __len__(self):
+        return len(self.image_files)
+
+    def __getitem__(self, idx):
+        img_filename = self.image_files[idx]
+        img_path = os.path.join(self.images_dir, img_filename)
+
+        image = cv2.imread(img_path)
+        if image is None:
+            raise FileNotFoundError(f'Nie znaleziono obrazu: {img_path}')
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        orig_h, orig_w = image.shape[:2]
+        resized_h, resized_w = 256, 256
+        image_resized = cv2.resize(image, (resized_w, resized_h))
+
+        scale_x = resized_w / orig_w
+        scale_y = resized_h / orig_h
+
+        bboxes = self.annotations[img_filename]  # lista [x,y,w,h]
+        boxes = []
+        for x, y, w, h in bboxes:
+            if w < 2 or h < 2:
+                continue  # pomiń zbyt małe lub zerowe bboxy
+
+            xmin = x * scale_x
+            ymin = y * scale_y
+            xmax = (x + w) * scale_x
+            ymax = (y + h) * scale_y
+
+            if xmax <= xmin or ymax <= ymin:
+                continue  
+
+            boxes.append([xmin, ymin, xmax, ymax])
+
+        # jeśli żaden box nie był poprawny, próbuj inny przykład
+        if len(boxes) == 0:
+            return self.__getitem__((idx + 1) % len(self))
+
+        boxes = torch.tensor(boxes, dtype=torch.float32)
+        labels = torch.ones((len(boxes),), dtype=torch.int64)
+
+        if self.transform:
+            image_tensor = self.transform(image_resized)
+        else:
+            transform_default = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.ToTensor()
+            ])
+            image_tensor = transform_default(image_resized)
+
+        target = {
+            'boxes': boxes,
+            'labels': labels,
+            'image_id': torch.tensor([idx])
+        }
+
+        return image_tensor, target
+""")
+      st.amrkdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
+      st.amrkdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
+      st.markdown("""
+```python
+transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize((256, 256)),  # ustalony rozmiar
+    transforms.ToTensor()
+])
+
+dataset = WiderFaceDataset(
+    images_dir='data/WIDER_train/images',
+    annotations=annotations,
+    transform=transform
+)
+""")
+    st.amrkdown('## 2.2 Tworzenie dataloadera')
+    st.amrkdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
+        
 
 with tabs[1]:
     st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
