@@ -48,17 +48,17 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)) {
         background: linear-gradient(
             135deg,
-            rgba(200, 50, 50, 0.65),   /* jasna, ale nie neonowa czerwień */
-            rgba(160, 40, 40, 0.55),   /* karmazynowy czerwony */
-            rgba(100, 30, 30, 0.4)     /* ciemny czerwony / cegła */
+            rgba(193, 18, 31, 0.7),    /* głęboki szkarłat #C1121F */
+            rgba(160, 30, 40, 0.6),    /* ciepła ciemniejsza czerwień */
+            rgba(90, 15, 25, 0.45)     /* przygaszony ciemnoczerwony */
         );
-        border: 1px solid rgba(200, 50, 50, 0.5);
+        border: 1px solid rgba(193, 18, 31, 0.5);
         border-radius: 20px;
         padding: 24px;
         box-shadow:
-            0 0 14px rgba(200, 50, 50, 0.45),
-            0 4px 24px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(14px) brightness(0.9);
+            0 0 16px rgba(193, 18, 31, 0.45),
+            0 4px 26px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(14px) brightness(0.95);
         background-blend-mode: overlay;
         transition: all 0.3s ease-in-out;
     }
@@ -66,8 +66,8 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)):hover {
         transform: translateY(-6px);
         box-shadow:
-            0 0 22px rgba(200, 50, 50, 0.65),
-            0 8px 32px rgba(0, 0, 0, 0.6);
+            0 0 22px rgba(193, 18, 31, 0.65),
+            0 8px 34px rgba(0, 0, 0, 0.6);
     }
     </style>
     """,
