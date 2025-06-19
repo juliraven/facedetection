@@ -237,7 +237,7 @@ dataset = WiderFaceDataset(
         
 
 with tabs[1]:
-    st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy - kod</h1>", unsafe_allow_html=True)
     st.markdown('')
 
     styled_container = st.container()
