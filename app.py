@@ -20,7 +20,7 @@ st.markdown(
     <style>
     .css-1d391kg { 
         padding-top: 0rem;
-        margin-top: 0rem;
+        margin-top: 10rem;
     }
     </style>
     """, unsafe_allow_html=True
