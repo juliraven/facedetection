@@ -3,7 +3,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
-st.title("Wykrywanie i rozpoznwanie twarzy")
+st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
     """
