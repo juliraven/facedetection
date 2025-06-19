@@ -425,7 +425,7 @@ with tabs[2]:
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
-    state_dict = torch.load(model_path, map_location=torch.device('cpu'))
+    state_dict = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
     model.load_state_dict(state_dict)
     model.eval()
 
