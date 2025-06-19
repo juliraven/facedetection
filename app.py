@@ -432,22 +432,41 @@ with tabs[2]:
     ])
 
     def detect_faces(image_np):
-        image_tensor = transform(image_np).unsqueeze(0)
+        original_h, original_w = image_np.shape[:2]
+
+        image_resized = cv2.resize(image_np, (256, 256))  # rozmiar zgodny z transform
+        image_tensor = transform(image_resized).unsqueeze(0)
+
         with torch.no_grad():
             prediction = model(image_tensor)[0]
-        return prediction
-    
+
+        scale_x = original_w / 256
+        scale_y = original_h / 256
+
+        boxes_scaled = []
+        for box in prediction['boxes']:
+            x1, y1, x2, y2 = box.tolist()
+            x1 = int(x1 * scale_x)
+            x2 = int(x2 * scale_x)
+            y1 = int(y1 * scale_y)
+            y2 = int(y2 * scale_y)
+            boxes_scaled.append((x1, y1, x2, y2))
+
+        return boxes_scaled, prediction['scores']
+
     uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
     if uploaded_file is not None:
         image = Image.open(uploaded_file).convert("RGB")
         image_np = np.array(image)
-        pred = detect_faces(image_np)
 
-        for box, score in zip(pred['boxes'], pred['scores']):
+        boxes, scores = detect_faces(image_np)
+
+        for (x1, y1, x2, y2), score in zip(boxes, scores):
             if score > 0.5:
-                x1, y1, x2, y2 = box.int().numpy()
                 cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
         st.image(image_np, caption="Wykryte twarze", use_container_width=True)
+
 
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
