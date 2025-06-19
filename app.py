@@ -471,6 +471,7 @@ with tabs[3]:
     from streamlit_webrtc import VideoTransformerBase
     import cv2
     import torch
+    from streamlit_webrtc import webrtc_streamer
 
     class FaceDetector(VideoTransformerBase):
         def transform(self, frame):
