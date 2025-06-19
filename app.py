@@ -74,32 +74,28 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+cols = st.columns((1,2,1))
 
-tabs = st.tabs(["Opis projektu", "Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
+with cols[1]:
+    styled_container = st.container()
+    st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
+    with styled_container:
+        st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
+        st.markdown('')
+        st.write('Celem naszego projektu było zbudowanie sieci neuronowej, która potrafi wykrywać ludzkie twarze na obrazach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy.')
+
+tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
 
 with tabs[0]:
-    st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
-    st.markdown('')
-
-    cols = st.columns((1,2,1))
-
-    with cols[1]:
-        styled_container = st.container()
-        st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
-        with styled_container:
-            st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
-            st.write('Celem naszego projektu było zbudowanie sieci neuronowej, która potrafi wykrywać ludzkie twarze na obrazach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy.')
-
-
-with tabs[1]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-with tabs[2]:
+with tabs[1]:
     st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-with tabs[3]:
+with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
     st.markdown('')
 
@@ -157,7 +153,7 @@ with tabs[3]:
                 cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
         st.image(image_np, caption="Wykryte twarze", use_column_width=True)
 
-with tabs[4]:
+with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
     import torch
