@@ -15,6 +15,21 @@ gradient_css = """
 
 st.markdown(gradient_css, unsafe_allow_html=True)
 
+st.markdown(
+    """
+    <style>
+    .emoji-top {
+        margin-top: -20px; /* Zmniejszenie marginesu górnego */
+    }
+    </style>
+    
+    <div style="text-align: center;">
+        <h2>Analiza sentymentu na podstawie recenzji użytkowników strony <br>Rotten Tomatoes</h2>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
