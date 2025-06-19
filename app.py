@@ -424,12 +424,9 @@ with tabs[2]:
     model.eval()
 
     transform = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((800, 800)),  # większa rozdzielczość = lepsza detekcja
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-    ])
+    transforms.ToPILImage(),
+    transforms.Resize((256, 256)),
+    transforms.ToTensor()])
 
     def detect_faces(image_np):
         original_h, original_w = image_np.shape[:2]
