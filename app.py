@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
@@ -35,7 +34,6 @@ with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-    import streamlit as st
     import torch
     from torchvision.models.detection import fasterrcnn_resnet50_fpn, FastRCNNPredictor
     from torchvision import transforms
