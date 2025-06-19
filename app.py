@@ -83,7 +83,7 @@ with tabs[0]:
 
     cols = st.columns((2,2,2))
 
-    with col[2]:
+    with cols[2]:
         styled_container = st.container()
         st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
         with styled_container:
