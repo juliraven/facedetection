@@ -74,8 +74,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
 cols = st.columns((1,2,1))
 
 with cols[1]:
@@ -100,13 +98,20 @@ with tabs[0]:
 
         st.markdown("""
 ```python
-def add(a, b):
-    return a + b
 """)
 
 with tabs[1]:
     st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
     st.markdown('')
+
+    styled_container = st.container()
+    st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
+    with styled_container:
+        st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
+
+        st.markdown("""
+```python
+""")
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
