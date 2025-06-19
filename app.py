@@ -114,7 +114,7 @@ import matplotlib.patches as patches
 import torch.optim as optim
 from tqdm import tqdm
 """)
-        st.amrkdown('## 1.2 Parsowanie pliku adnotacji WIDER Face')
+        st.markdown('## 1.2 Parsowanie pliku adnotacji WIDER Face')
         st.markdown("""
 ```python
 def parse_widerface_annotations(ann_file):
@@ -147,7 +147,7 @@ print(f'Liczba obrazów: {len(annotations)}')
 print(f'Liczba obrazów z adnotacjami: {len(annotations)}')
 print('Przykład bboxów dla pierwszego obrazu:', list(annotations.values())[0])
 """)
-        st.amrkdown('## 1.3 Załdaowanie datasetu i ramek')
+        st.markdown('## 1.3 Załdaowanie datasetu i ramek')
         st.markdown("""
 ```python
 class WiderFaceDataset(Dataset):
@@ -216,8 +216,8 @@ class WiderFaceDataset(Dataset):
 
         return image_tensor, target
 """)
-      st.amrkdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
-      st.amrkdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
+      st.markdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
+      st.markdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
       st.markdown("""
 ```python
 transform = transforms.Compose([
@@ -232,8 +232,8 @@ dataset = WiderFaceDataset(
     transform=transform
 )
 """)
-    st.amrkdown('## 2.2 Tworzenie dataloadera')
-    st.amrkdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
+    st.markdown('## 2.2 Tworzenie dataloadera')
+    st.markdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
         
 
 with tabs[1]:
