@@ -86,7 +86,7 @@ with cols[1]:
 tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
 
 with tabs[0]:
-    st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy - kod</h1>", unsafe_allow_html=True)
     st.markdown('')
 
     styled_container = st.container()
@@ -94,6 +94,7 @@ with tabs[0]:
     with styled_container:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
 
+        st.markdown('# 1. Przygotowanie środowiska i danych')
         st.markdown("""
 ```python
 """)
