@@ -81,7 +81,7 @@ with cols[1]:
     st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
     with styled_container:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
-        st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center;'>Opis projektu</h2>", unsafe_allow_html=True)
         st.markdown('')
         st.write('Celem naszego projektu było zbudowanie sieci neuronowej, która potrafi wykrywać ludzkie twarze na obrazach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy.')
 
