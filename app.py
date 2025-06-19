@@ -216,9 +216,9 @@ class WiderFaceDataset(Dataset):
 
         return image_tensor, target
 """)
-      st.markdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
-      st.markdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
-      st.markdown("""
+        st.markdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
+        st.markdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
+        st.markdown("""
 ```python
 transform = transforms.Compose([
     transforms.ToPILImage(),
@@ -232,8 +232,8 @@ dataset = WiderFaceDataset(
     transform=transform
 )
 """)
-    st.markdown('## 2.2 Tworzenie dataloadera')
-    st.markdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
+        st.markdown('## 2.2 Tworzenie dataloadera')
+        st.markdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
         
 
 with tabs[1]:
