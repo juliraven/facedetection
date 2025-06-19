@@ -62,19 +62,6 @@ body {
 
 st.markdown(page_bg_img_sidebar, unsafe_allow_html=True)
 
-import numpy as np
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import altair as alt
-import base64
-import json
-import time
-from pyvis.network import Network
-import tempfile
-import re
-from streamlit_echarts import st_echarts
-
 st.markdown(
     """
     <style>
