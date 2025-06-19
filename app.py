@@ -412,9 +412,9 @@ with tabs[2]:
     import streamlit as st
 
     def download_from_gdrive(file_id, output_path):
-    url = f"https://drive.google.com/uc?id={file_id}"
-    if not os.path.exists(output_path):
-        gdown.download(url, output_path, quiet=False)
+        url = f"https://drive.google.com/uc?id={file_id}"
+        if not os.path.exists(output_path):
+            gdown.download(url, output_path, quiet=False)
 
     model_file_id = "1HYWwhDrrUvL66EtmWRn3kycHYdWN1Bzz"
     model_path = "model-facedetect.pth"
