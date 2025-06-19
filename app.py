@@ -259,8 +259,7 @@ for i in range(4):
         rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
                                  linewidth=2, edgecolor='r', facecolor='none')
         axs[i].add_patch(rect)
-plt.show()
-)
+plt.show())
 """)
         col1, col2, col3, col4 = st.columns(4)
         with col1:
@@ -274,6 +273,114 @@ plt.show()
 
         with col4:
             st.image('svg4.svg')
+
+        st.markdown('## 2.4 Sprawdzenie dostępności GPU')
+        st.markdown("""
+```python
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"\n Uruchomiono na: {'GPU' if device.type == 'cuda' else 'CPU'}")
+""")
+        st.markdown('# 3. Podział danych i utworzenie dataloaderów')
+        st.markdown("""
+```python
+# rozmiary podzbiorów:
+train_size = int(0.7 * len(dataset))
+val_size = int(0.15 * len(dataset))
+test_size = len(dataset) - train_size - val_size
+
+# podział:
+train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
+
+# dataloadery:
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
+val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, collate_fn=collate_fn)
+test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False, collate_fn=collate_fn)
+""")
+        st.markdown('# 4. Przygotowanie modelu i trening')
+        st.markdown("""
+```python
+from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+
+weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT
+model = fasterrcnn_resnet50_fpn(weights=weights)
+
+num_classes = 2
+in_features = model.roi_heads.box_predictor.cls_score.in_features
+model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model.to(device)
+
+optimizer = optim.SGD(model.parameters(), lr=0.005, momentum=0.9, weight_decay=0.0005)
+num_epochs = 50
+
+train_losses = []
+val_losses = []
+
+# trening:
+for epoch in range(num_epochs):
+    model.train()
+    total_loss = 0
+
+    train_loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Train", leave=False)
+    for images, targets in train_loop:
+        images = [img.to(device) for img in images]
+        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+
+        optimizer.zero_grad()
+        loss_dict = model(images, targets)
+        losses = sum(loss for loss in loss_dict.values())
+        losses.backward()
+        optimizer.step()
+
+        total_loss += losses.item()
+        train_loop.set_postfix(loss=losses.item())
+
+    avg_train_loss = total_loss / len(train_loader)
+
+    # walidacja:
+    model.eval() 
+    val_loss = 0
+
+    with torch.no_grad():
+        val_loop = tqdm(val_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Val", leave=False)
+        for images, targets in val_loop:
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+
+            loss_dict = model(images, targets)
+            losses = sum(loss for loss in loss_dict.values())
+            val_loss += losses.item()
+            val_loop.set_postfix(val_loss=losses.item())
+
+    avg_val_loss = val_loss / len(val_loader)
+
+    train_losses.append(avg_train_loss)
+    val_losses.append(avg_val_loss)
+
+    print(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+
+plt.figure(figsize=(10,5))
+plt.plot(train_losses, label='Train Loss')
+plt.plot(val_losses, label='Val Loss')
+plt.title('Loss over epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+""")
+        st.markdown('# 5. Testowanie i wizualizacja wyników')
+        st.markdown("""
+```python
+
+""")
+        st.markdown('# 6. Zapisanie modelu')
+        st.markdown("""
+```python
+torch.save(model.state_dict(), "model-facedetect.pth")
+torch.save(model, "model-facedetect-full.pth")
+""")
         
 
 with tabs[1]:
