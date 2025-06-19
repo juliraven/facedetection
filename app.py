@@ -420,11 +420,6 @@ with tabs[2]:
     model_path = "model-facedetect.pth"
     download_from_gdrive(model_file_id, model_path)
 
-    model = fasterrcnn_resnet50_fpn(pretrained=False)
-    num_classes = 2  
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
-
     state_dict = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
     model.load_state_dict(state_dict)
     model.eval()
