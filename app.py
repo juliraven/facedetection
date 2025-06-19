@@ -233,7 +233,47 @@ dataset = WiderFaceDataset(
 )
 """)
         st.markdown('## 2.2 Tworzenie dataloadera')
+        st.markdown("""
+```python
+def collate_fn(batch):
+    return tuple(zip(*batch))
+
+dataloader = DataLoader(dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
+)
+""")
         st.markdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
+        st.markdown("""
+```python
+batch = next(iter(dataloader))
+images, bboxes_batch = batch 
+
+fig, axs = plt.subplots(1, 4, figsize=(20,5))
+for i in range(4):
+    img = images[i].permute(1, 2, 0).numpy()
+    axs[i].imshow(img)
+    axs[i].axis('off')
+    
+    bboxes = bboxes_batch[i]['boxes'].cpu().numpy()
+    for box in bboxes:
+        x_min, y_min, x_max, y_max = box
+        rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
+                                 linewidth=2, edgecolor='r', facecolor='none')
+        axs[i].add_patch(rect)
+plt.show()
+)
+""")
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.markdown(svg1, unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(svg2, unsafe_allow_html=True)
+
+        with col3:
+            st.markdown(svg3, unsafe_allow_html=True)
+
+        with col4:
+            st.markdown(svg4, unsafe_allow_html=True)
         
 
 with tabs[1]:
