@@ -15,6 +15,17 @@ gradient_css = """
 
 st.markdown(gradient_css, unsafe_allow_html=True)
 
+st.markdown(
+    """
+    <style>
+    .css-1d391kg { 
+        padding-top: 0rem;
+        margin-top: 0rem;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
