@@ -468,6 +468,10 @@ with tabs[2]:
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
+    from streamlit_webrtc import VideoTransformerBase
+    import cv2
+    import torch
+
     class FaceDetector(VideoTransformerBase):
         def transform(self, frame):
             img = frame.to_ndarray(format="bgr24")
