@@ -15,6 +15,28 @@ gradient_css = """
 
 st.markdown(gradient_css, unsafe_allow_html=True)
 
+st.markdown(
+    """
+    <style>
+    /* Zmiana tła w bloku kodu */
+    .streamlit-expanderHeader, 
+    .stCodeBlock {
+        background-color: #f0f0f0 !important;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    /* Możesz też zmienić kolor tła tylko w bloku st.code */
+    div.stCodeBlock {
+        background-color: #282c34 !important;  /* ciemne tło */
+        color: #abb2bf !important;            /* jasny tekst */
+        padding: 10px;
+        border-radius: 5px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
