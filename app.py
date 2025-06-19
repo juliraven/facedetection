@@ -164,17 +164,17 @@ with tabs[2]:
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
 
-    class FaceDetector(VideoTransformerBase):
-        def transform(self, frame):
-            img = frame.to_ndarray(format="bgr24")
-            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            pred = detect_faces(img_rgb)
+    #class FaceDetector(VideoTransformerBase):
+     #   def transform(self, frame):
+      #      img = frame.to_ndarray(format="bgr24")
+       #     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #    pred = detect_faces(img_rgb)
 
-            for box, score in zip(pred['boxes'], pred['scores']):
-                if score > 0.5:
-                    x1, y1, x2, y2 = box.int().numpy()
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            return img
+         #   for box, score in zip(pred['boxes'], pred['scores']):
+          #      if score > 0.5:
+           #         x1, y1, x2, y2 = box.int().numpy()
+            #        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            #return img
 
     #webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
 
