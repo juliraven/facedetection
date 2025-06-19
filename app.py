@@ -264,16 +264,16 @@ plt.show()
 """)
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.markdown('svg1.svg', unsafe_allow_html=True)
+            st.image('svg1.svg')
 
         with col2:
-            st.markdown('svg2.svg', unsafe_allow_html=True)
+            st.image('svg2.svg')
 
         with col3:
-            st.markdown('svg3.svg', unsafe_allow_html=True)
+            st.image('svg3.svg')
 
         with col4:
-            st.markdown('svg4.svg', unsafe_allow_html=True)
+            st.iamge('svg4.svg')
         
 
 with tabs[1]:
