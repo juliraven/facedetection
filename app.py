@@ -416,7 +416,7 @@ with tabs[2]:
         if not os.path.exists(output_path):
             gdown.download(url, output_path, quiet=False)
 
-    model_file_id = "1HYWwhDrrUvL66EtmWRn3kycHYdWN1Bzz"
+    model_file_id = "1_XyIO6P37cPoneyClBHFz9ZYzB1g15Z7"
     model_path = "model-facedetect.pth"
     download_from_gdrive(model_file_id, model_path)
 
