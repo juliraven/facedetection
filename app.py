@@ -81,9 +81,9 @@ with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Opis projektu</h1>", unsafe_allow_html=True)
     st.markdown('')
 
-    cols = st.columns((2,2,2))
+    cols = st.columns((1,2,1))
 
-    with cols[2]:
+    with cols[1]:
         styled_container = st.container()
         st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
         with styled_container:
