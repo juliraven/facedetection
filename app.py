@@ -24,13 +24,11 @@ st.markdown(
     </style>
     
     <div style="text-align: center;">
-        <h2>Analiza sentymentu na podstawie recenzji użytkowników strony <br>Rotten Tomatoes</h2>
+        <h1>Wykrywanie i rozpoznwanie twarzy</h1>
     </div>
     """, 
     unsafe_allow_html=True
 )
-
-st.markdown("<h1 style='text-align: center;'>Wykrywanie i rozpoznwanie twarzy</h1>", unsafe_allow_html=True)
 
 st.markdown(
     """
