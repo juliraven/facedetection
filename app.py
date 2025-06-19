@@ -48,17 +48,17 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)) {
         background: linear-gradient(
             135deg,
-            rgba(100, 30, 120, 0.65),   /* ciemny fiolet z różem */
-            rgba(120, 20, 80, 0.55),    /* ciemny różowawy fiolet */
-            rgba(40, 10, 40, 0.4)       /* bardzo ciemna baza */
+            rgba(42, 89, 137, 0.6),    /* #2a5989 z przezroczystością */
+            rgba(35, 70, 110, 0.55),   /* ciemniejszy niebieski */
+            rgba(20, 40, 60, 0.4)      /* granatowy, niemal czarny */
         );
-        border: 1px solid rgba(120, 20, 80, 0.6);
+        border: 1px solid rgba(42, 89, 137, 0.5);
         border-radius: 20px;
         padding: 24px;
         box-shadow:
-            0 0 14px rgba(120, 20, 80, 0.5),
-            0 4px 24px rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(14px) brightness(0.7);
+            0 0 12px rgba(42, 89, 137, 0.4),
+            0 4px 24px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(12px) brightness(0.9);
         background-blend-mode: overlay;
         transition: all 0.3s ease-in-out;
     }
@@ -66,13 +66,14 @@ st.markdown(
     div[data-testid="stVerticalBlock"]:has(div#gradient_container_marker):not(:has(div#outer_marker)):hover {
         transform: translateY(-6px);
         box-shadow:
-            0 0 22px rgba(120, 20, 80, 0.7),
-            0 8px 34px rgba(0, 0, 0, 0.65);
+            0 0 20px rgba(42, 89, 137, 0.6),
+            0 8px 30px rgba(0, 0, 0, 0.6);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 
 
