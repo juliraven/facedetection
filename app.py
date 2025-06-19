@@ -25,12 +25,15 @@ with tabs[0]:
 
 with tabs[1]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy</h1>", unsafe_allow_html=True)
+    st.markdown('')
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy</h1>", unsafe_allow_html=True)
+    st.markdown('')
 
 with tabs[3]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
+    st.markdown('')
 
     import streamlit as st
     import torch
