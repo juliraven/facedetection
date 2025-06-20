@@ -849,7 +849,7 @@ with tabs[2]:
 
     selected_example = None
 
-    n1, n2, n3 = = st.columns([1,5,1])
+    n1, n2, n3 = st.columns([1,5,1])
     with n2:
         st.write("Wybierz przykład:")
         cols = st.columns(len(example_media))
