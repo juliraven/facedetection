@@ -882,7 +882,7 @@ with tabs[2]:
 
         if path:
             stframe = st.empty()
-            resize_to = (256, 256)
+            resize_to = (128, 128)
             speed_factor = 1.5  # przyspieszenie odtwarzania np. 1.5x
 
             if is_gif:
