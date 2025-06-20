@@ -884,7 +884,7 @@ with tabs[2]:
 
         if path:
             stframe = st.empty()
-            resize_to = (128, 128)
+            resize_to = (256, 256)
             speed_factor = 1.5  # przyspieszenie odtwarzania np. 1.5x
 
             if is_gif:
@@ -915,13 +915,13 @@ with tabs[2]:
             for (x1, y1, x2, y2) in boxes
         ]
 
-                for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
-                    if score > 0.5:
-                        cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
+                        if score > 0.5:
+                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    out.write(frame_np)
+                        out.write(frame_np)
 
-                out.release()
+                    out.release()
 
                 with open(temp_video_file.name, "rb") as f:
                     video_bytes = f.read()
