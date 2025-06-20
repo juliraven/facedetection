@@ -789,9 +789,9 @@ with tabs[2]:
 
             for col, (label, path) in zip(cols, example_images.items()):
                 with col:
-                    st.image(path, caption=label, use_container_width=True)
                     if st.button(f"Użyj {label}"):
                         selected_example = path
+                    st.image(path, caption=label, use_column_width=True)
 
         image_np = None
 
