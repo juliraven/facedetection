@@ -118,30 +118,34 @@ from tqdm import tqdm
         st.markdown("""
 ```python
 def parse_widerface_annotations(ann_file):
-    annotations = {}
+    annotations = {} # słownik do przechowywania adnotacji postaci: {ścieżka do obrazu: [lista bboxów]}
     with open(ann_file, 'r') as f:
-        lines = f.readlines()
+        lines = f.readlines() # wczytuje wszystkie linie w pliku adnotacji
     
     i = 0
     while i < len(lines):
         line = lines[i].strip()
+
+        # jeśli linia kończy się na '.jpg', oznacza to początek nowego wpisu z adnotacjami dla danego obrazu
         if line.endswith('.jpg'):
             img_path = line
             i += 1
-            num_faces = int(lines[i].strip())
+            num_faces = int(lines[i].strip()) # liczba twarzy na obrazku
             i += 1
-            bboxes = []
+            bboxes = [] # lista do przechowywania ramek (bbox) dla danego obrazu
+
+            # iteracja po liczbie twarzy i pobranie bboxów
             for _ in range(num_faces):
-                parts = lines[i].strip().split()
-                x, y, w, h = map(int, parts[:4])
-                bboxes.append([x, y, w, h])
+                parts = lines[i].strip().split() # podział linii na części
+                x, y, w, h = map(int, parts[:4]) # pobranie współrzędnych i wymiarów bboxa
+                bboxes.append([x, y, w, h]) # dodanie do listy
                 i += 1
-            annotations[img_path] = bboxes
+            annotations[img_path] = bboxes # dodanie adnotacji dla danego obrazu do słownika
         else:
-            i += 1
+            i += 1 # przejście do kolejnej linii, jeśli nie znaleziono obrazka
     return annotations
 
-ANNOTATIONS_PATH = 'data/wider_face_split/wider_face_train_bbx_gt.txt'
+ANNOTATIONS_PATH = 'data/wider_face_split/wider_face_train_bbx_gt.txt' # ścieżka do pliku z adnotacjami
 annotations = parse_widerface_annotations(ANNOTATIONS_PATH)
 print(f'Liczba obrazów: {len(annotations)}')
 print(f'Liczba obrazów z adnotacjami: {len(annotations)}')
