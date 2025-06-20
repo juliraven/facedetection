@@ -773,7 +773,8 @@ with tabs[2]:
 
     if option == "zdjęcie":
         m1, m2 = st.columns([1,1])
-        uploaded_file = m1.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
+        m1.write("Wgraj zdjęcie:")
+        uploaded_file = m1.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
         "przykład 1": "img1.jpg",
         "przykład 2": "img2.jpg",
@@ -782,6 +783,7 @@ with tabs[2]:
     }
 
         selected_example = None
+        target_height = 100  
 
         with m2:
             st.write("Wybierz przykład:")
@@ -791,11 +793,12 @@ with tabs[2]:
                 with col:
                     if st.button(f"{label}"):
                         selected_example = path
+
                     img = Image.open(path).convert("RGB")
                     w, h = img.size
                     new_width = int((target_height / h) * w)
                     img_resized = img.resize((new_width, target_height))
-                    st.image(image_resized)
+                    st.image(img_resized)
 
         image_np = None
 
