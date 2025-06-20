@@ -865,7 +865,7 @@ with tabs[2]:
         path = None
         is_gif = False
 
-        if media_file := st.file_uploader("Wgraj plik:", type=["mp4", "avi", "mov", "gif"]):
+        if media_file is not None:
             file_ext = media_file.name.split('.')[-1].lower()
 
             if file_ext == "gif":
