@@ -900,7 +900,8 @@ with tabs[2]:
                 fps = 1000 / np.mean(delays)
 
                 temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
-                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
+                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+                
                 if not out.isOpened():
                     st.error("Nie udało się otworzyć pliku do zapisu GIF-a jako wideo.")
 
@@ -937,7 +938,8 @@ with tabs[2]:
                     fps = 15.0
 
                 temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
-                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
+                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+
                 if not out.isOpened():
                     st.error("Nie udało się otworzyć pliku do zapisu wideo.")
 
