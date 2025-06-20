@@ -734,7 +734,8 @@ with tabs[2]:
 
     def detect_faces(image_np):
         original_h, original_w = image_np.shape[:2]
-        image_resized = cv2.resize(image_np, (256, 256))
+        image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+        image_resized = cv2.resize(image_rgb, (256, 256))
     
         transform = transforms.Compose([
             transforms.ToPILImage(),
