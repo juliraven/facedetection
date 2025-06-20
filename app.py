@@ -459,7 +459,7 @@ plt.legend()
 plt.show()
 """)
         c1, c2, c3 = st.columns([1,3,1])
-        st.image('loss_plot.svg')
+        c2.image('loss_plot.svg')
         st.markdown('# 5. Testowanie i wizualizacja wyników')
         st.markdown("""
 ```python
