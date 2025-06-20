@@ -847,9 +847,7 @@ with tabs[2]:
         "przykład 3": "example3.gif"
     }
 
-        selected_example = None
-
-        n1, n2, n3 = st.columns([1,5,1])
+        n1, n2, n3 = st.columns([1, 5, 1])
         with n2:
             st.write("Wybierz przykład:")
             cols = st.columns(len(example_media))
@@ -857,6 +855,7 @@ with tabs[2]:
                 with col:
                     if st.button(label):
                         selected_example = path
+
                     if path.endswith(".gif"):
                         st.image(path, use_container_width=True)
                     else:
@@ -864,55 +863,66 @@ with tabs[2]:
 
         path = None
         is_gif = False
-        if media_file is not None:
+
+        if media_file := st.file_uploader("Wgraj plik:", type=["mp4", "avi", "mov", "gif"]):
             file_ext = media_file.name.split('.')[-1].lower()
+
             if file_ext == "gif":
                 is_gif = True
                 path = Image.open(media_file)
             else:
-                tfile = "temp_video." + file_ext
-                with open(tfile, 'wb') as f:
+                temp_path = f"temp_video.{file_ext}"
+                with open(temp_path, "wb") as f:
                     f.write(media_file.read())
-                path = tfile
-        elif selected_example:
-            if selected_example.endswith(".gif"):
-                is_gif = True
-                path = Image.open(selected_example)
-            else:
-                path = selected_example
+                path = temp_path
+        else:
+            if selected_example:
+                if selected_example.endswith(".gif"):
+                    is_gif = True
+                    path = Image.open(selected_example)
+                else:
+                    path = selected_example
 
         if path:
             stframe = st.empty()
+            resize_to = (256, 256)
 
             if is_gif:
                 gif = path
+                frame_index = 0
+
                 try:
                     while True:
-                        gif_frame = gif.convert("RGB")
-                        frame_np_original = np.array(gif_frame)[:, :, ::-1].copy()  # BGR
+                        frame_index += 1
+                        start_time = time.time()
 
-                        original_h, original_w = frame_np_original.shape[:2]
-                        frame_resized = cv2.resize(frame_np_original, (256, 256))
+                        gif_frame = gif.convert("RGB")
+                        frame_np = np.array(gif_frame)[:, :, ::-1].copy()
+
+                        h, w = frame_np.shape[:2]
+                        frame_resized = cv2.resize(frame_np, resize_to)
                         boxes, scores = detect_faces(frame_resized)
 
-                        scale_x = original_w / 256
-                        scale_y = original_h / 256
+                        scale_x = w / resize_to[0]
+                        scale_y = h / resize_to[1]
                         boxes_scaled = [
-                            (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                            for (x1, y1, x2, y2) in boxes
-                    ]
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
 
                         for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                             if score > 0.5:
-                                cv2.rectangle(frame_np_original, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                                cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                        frame_rgb = cv2.cvtColor(frame_np_original, cv2.COLOR_BGR2RGB)
-                        stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                        frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
+                        stframe.image(frame_rgb, channels="RGB", use_column_width=True)
 
-                        delay = gif.info.get("duration", 100)
-                        time.sleep(delay / 1000.0)
+                        delay = gif.info.get("duration", 100) / 1000.0
+                        elapsed = time.time() - start_time
+                        time.sleep(max(0.001, delay - elapsed))
 
                         gif.seek(gif.tell() + 1)
+
                 except EOFError:
                     pass
 
@@ -923,16 +933,16 @@ with tabs[2]:
                     if not ret:
                         break
 
-                    original_h, original_w = frame.shape[:2]
-                    frame_resized = cv2.resize(frame, (256, 256))
+                    h, w = frame.shape[:2]
+                    frame_resized = cv2.resize(frame, resize_to)
                     boxes, scores = detect_faces(frame_resized)
 
-                    scale_x = original_w / 256
-                    scale_y = original_h / 256
+                    scale_x = w / resize_to[0]
+                    scale_y = h / resize_to[1]
                     boxes_scaled = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
+                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                for (x1, y1, x2, y2) in boxes
+            ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
@@ -942,9 +952,5 @@ with tabs[2]:
                     stframe.image(frame_rgb, channels="RGB", use_column_width=True)
 
                 cap.release()
-
-
-
-
 
 
