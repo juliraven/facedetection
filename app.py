@@ -774,11 +774,11 @@ with tabs[2]:
         m1, m2 = st.columns([1,1])
         uploaded_file = m1.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
-        "Przykład 1": "img1.jpg",
-        "Przykład 2": "img2.jpg",
-        "Przykład 3": "img3.jpg",
-        "Przykład 4": "img4.jpg",
-        "Przykład 5": "img5.jpg",
+        "przykład 1": "img1.jpg",
+        "przykład 2": "img2.jpg",
+        "przykład 3": "img3.jpg",
+        "przykład 4": "img4.jpg",
+        "przykład 5": "img5.jpg",
     }
 
         selected_example = None
@@ -789,9 +789,9 @@ with tabs[2]:
 
             for col, (label, path) in zip(cols, example_images.items()):
                 with col:
-                    if st.button(f"Użyj {label}"):
+                    if st.button(f"{label}"):
                         selected_example = path
-                    st.image(path, caption=label, use_column_width=True)
+                    st.image(path, use_container_width=True)
 
         image_np = None
 
