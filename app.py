@@ -843,7 +843,7 @@ with tabs[2]:
         "przykład 1": "example1.gif",
         "przykład 2": "example2.gif",
         "przykład 3": "example3.gif",
-        "przykłąd 4": "example4.mp4"
+        "przykład 4": "example4.mp4"
     }
 
         selected_example = None
