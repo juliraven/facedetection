@@ -791,6 +791,7 @@ with tabs[2]:
                 with col:
                     if st.button(f"{label}"):
                         selected_example = path
+                    img = Image.open(path).convert("RGB")
                     w, h = img.size
                     new_width = int((target_height / h) * w)
                     img_resized = img.resize((new_width, target_height))
