@@ -703,7 +703,6 @@ with tabs[1]:
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo</h1>", unsafe_allow_html=True)
-    st.markdown('')
     
     import os
     import gdown
@@ -772,7 +771,7 @@ with tabs[2]:
     option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
     if option == "zdjęcie":
-        m1, m2 = st.columns([1,2.5])
+        m1, m2 = st.columns([1,2])
         m1.write("Wgraj zdjęcie:")
         st.markdown(
         """
