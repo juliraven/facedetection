@@ -712,7 +712,7 @@ with tabs[2]:
     from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
     import numpy as np
     import cv2
-    from PIL import Image
+    from PIL import Image, ImageSequence
     import streamlit as st
 
     def download_from_gdrive(file_id, output_path):
