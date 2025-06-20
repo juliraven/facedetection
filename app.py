@@ -740,7 +740,8 @@ with tabs[2]:
             transforms.ToPILImage(),
             transforms.ToTensor()
     ])
-    
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         image_tensor = transform(image_resized).to(device)
         model.eval()
         with torch.no_grad():
