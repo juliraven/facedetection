@@ -706,9 +706,9 @@ with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
 
     import torch
-    print("Czy jest dostępne GPU:", torch.cuda.is_available())
+    st.write("Czy jest dostępne GPU:", torch.cuda.is_available())
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Urządzenie:", device)
+    st.write("Urządzenie:", device)
 
     
     import os
