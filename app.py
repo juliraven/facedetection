@@ -704,13 +704,6 @@ with tabs[1]:
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
-
-    import torch
-    st.write("Czy jest dostępne GPU:", torch.cuda.is_available())
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    st.write("Urządzenie:", device)
-
-    
     import os
     import gdown
     import torch
@@ -750,7 +743,6 @@ with tabs[2]:
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         image_tensor = transform(image_resized).to(device)
-        model.eval()
         with torch.no_grad():
             outputs = model([image_tensor])
     
@@ -897,11 +889,9 @@ with tabs[2]:
 
             if is_gif:
                 gif = path
-                frame_index = 0
 
                 try:
                     while True:
-                        frame_index += 1
                         start_time = time.time()
 
                         gif_frame = gif.convert("RGB")
