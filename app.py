@@ -157,34 +157,49 @@ print('Przykład bboxów dla pierwszego obrazu:', list(annotations.values())[0])
 class WiderFaceDataset(Dataset):
     def __init__(self, images_dir, annotations, transform=None):
         self.images_dir = images_dir
-        self.annotations = annotations
         self.transform = transform
-        self.image_files = list(annotations.keys())
 
+        # lista istniejących plików i odpowiadające im poprawne adnotacje
+        self.image_files = []
+        self.valid_annotations = {}
+
+        # filtrowanie plików, zostawianie tylko tych, które istnieją na dysku
+        for img_filename, bboxes in annotations.items():
+            img_path = os.path.join(images_dir, img_filename)
+            if os.path.exists(img_path):
+                self.image_files.append(img_filename)
+                self.valid_annotations[img_filename] = bboxes
+            else:
+                None # jeśli plik nie istnieje, ignorujemy go
+                
     def __len__(self):
-        return len(self.image_files)
+        return len(self.image_files) # zwraca liczbę dostępnych obrazków
 
     def __getitem__(self, idx):
+
+        # pobranie nazwy pliku i ścieżki
         img_filename = self.image_files[idx]
         img_path = os.path.join(self.images_dir, img_filename)
 
+        # wczytanie obrazu i konwersja na RGB
         image = cv2.imread(img_path)
-        if image is None:
-            raise FileNotFoundError(f'Nie znaleziono obrazu: {img_path}')
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        orig_h, orig_w = image.shape[:2]
-        resized_h, resized_w = 256, 256
+        orig_h, orig_w = image.shape[:2] # oryginalne rozmiary danego obrazka
+        resized_h, resized_w = 256, 256 # wymair docelowy
         image_resized = cv2.resize(image, (resized_w, resized_h))
 
+        # współczynniki skalowania bboxów
         scale_x = resized_w / orig_w
         scale_y = resized_h / orig_h
 
-        bboxes = self.annotations[img_filename]  # lista [x,y,w,h]
+        bboxes = self.valid_annotations[img_filename]  # pobranie oryginalnych bboxów (lista [x,y,w,h])
         boxes = []
+
+        # skalowanie bboxów i przekształcenie do formatu [xmin, ymin, xmax, ymax]
         for x, y, w, h in bboxes:
             if w < 2 or h < 2:
-                continue  # pomiń zbyt małe lub zerowe bboxy
+                continue  # pomija zbyt małe lub zerowe bboxy
 
             xmin = x * scale_x
             ymin = y * scale_y
@@ -192,17 +207,18 @@ class WiderFaceDataset(Dataset):
             ymax = (y + h) * scale_y
 
             if xmax <= xmin or ymax <= ymin:
-                continue  
+                continue  # dodatkowe zabezpieczenie przed błędnymi wartościami
 
             boxes.append([xmin, ymin, xmax, ymax])
 
-        # jeśli żaden box nie był poprawny, próbuj inny przykład
+        # jeśli brak poprawnych boxów, losowany jest inny przykład
         if len(boxes) == 0:
             return self.__getitem__((idx + 1) % len(self))
 
-        boxes = torch.tensor(boxes, dtype=torch.float32)
-        labels = torch.ones((len(boxes),), dtype=torch.int64)
+        boxes = torch.tensor(boxes, dtype=torch.float32) # zamiana listy ramek na tensor
+        labels = torch.ones((len(boxes),), dtype=torch.int64)  # przypisanie twarzom etykiety 1 
 
+        # przekształcenie obrazu do tensora 
         if self.transform:
             image_tensor = self.transform(image_resized)
         else:
@@ -212,13 +228,14 @@ class WiderFaceDataset(Dataset):
             ])
             image_tensor = transform_default(image_resized)
 
+        # zwracanie danych w formacie zgodnym z detekcją obiektów w PyTorch
         target = {
             'boxes': boxes,
             'labels': labels,
             'image_id': torch.tensor([idx])
         }
 
-        return image_tensor, target
+        return image_tensor, target # zwraca przetworzony obraz i odpowiadające mu dane (ramki i etykiety)
 """)
         st.markdown('# 2. Przetwarzanie danych i przygotowanie do uczenia')
         st.markdown('## 2.1 Definicja transformacji i inicjalizacja datasetu')
