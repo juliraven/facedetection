@@ -865,7 +865,6 @@ with tabs[2]:
 
         if media_file is not None:
             file_ext = media_file.name.split('.')[-1].lower()
-
             if file_ext == "gif":
                 is_gif = True
                 path = Image.open(media_file)
@@ -874,58 +873,59 @@ with tabs[2]:
                 with open(temp_path, "wb") as f:
                     f.write(media_file.read())
                 path = temp_path
-        else:
-            if selected_example:
-                if selected_example.endswith(".gif"):
-                    is_gif = True
-                    path = Image.open(selected_example)
-                else:
-                    path = selected_example
+        elif selected_example:
+            if selected_example.endswith(".gif"):
+                is_gif = True
+                path = Image.open(selected_example)
+            else:
+                path = selected_example
 
         if path:
             stframe = st.empty()
             resize_to = (256, 256)
+            speed_factor = 1.5  # przyspieszenie odtwarzania np. 1.5x
 
             if is_gif:
                 gif = path
+                frames = []
+                delays = []
 
-                try:
-                    while True:
-                        start_time = time.time()
+                for frame in ImageSequence.Iterator(gif):
+                    frames.append(frame.convert("RGB"))
+                    delays.append(max(20, frame.info.get("duration", 100)))  # ms
 
-                        gif_frame = gif.convert("RGB")
-                        frame_np = np.array(gif_frame)[:, :, ::-1].copy()
+                for i in range(len(frames)):
+                    frame = frames[i]
+                    delay = delays[i] / 1000.0 / speed_factor
 
-                        h, w = frame_np.shape[:2]
-                        frame_resized = cv2.resize(frame_np, resize_to)
-                        boxes, scores = detect_faces(frame_resized)
+                    start_time = time.time()
 
-                        scale_x = w / resize_to[0]
-                        scale_y = h / resize_to[1]
-                        boxes_scaled = [
+                    frame_np = np.array(frame)[:, :, ::-1].copy()
+                    h, w = frame_np.shape[:2]
+                    frame_resized = cv2.resize(frame_np, resize_to)
+                    boxes, scores = detect_faces(frame_resized)
+
+                    scale_x = w / resize_to[0]
+                    scale_y = h / resize_to[1]
+                    boxes_scaled = [
                     (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
                     for (x1, y1, x2, y2) in boxes
                 ]
 
-                        for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
-                            if score > 0.5:
-                                cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
+                        if score > 0.5:
+                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                        frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
-                        stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
+                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
 
-                        delay = gif.info.get("duration", 20) / 1000.0
-                        elapsed = time.time() - start_time
-                        time.sleep(max(0.001, delay - elapsed))
-
-                        gif.seek(gif.tell() + 1)
-
-                except EOFError:
-                    pass
+                    elapsed = time.time() - start_time
+                    time.sleep(max(0.001, delay - elapsed))
 
             else:
                 cap = cv2.VideoCapture(path)
                 while cap.isOpened():
+                    start_time = time.time()
                     ret, frame = cap.read()
                     if not ret:
                         break
@@ -937,9 +937,9 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                for (x1, y1, x2, y2) in boxes
-            ]
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
@@ -947,6 +947,9 @@ with tabs[2]:
 
                     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+
+                    elapsed = time.time() - start_time
+                    time.sleep(max(0.01, 1/30 - elapsed))  # celuj w 30 FPS
 
                 cap.release()
 
