@@ -794,7 +794,7 @@ with tabs[2]:
         selected_example = None
         target_height = 700  
 
-        n1, n2, n3 = st.column([1,5,1])
+        n1, n2, n3 = st.columns([1,5,1])
         with n2:
             cols = st.columns(len(example_images))  
 
