@@ -917,7 +917,7 @@ with tabs[2]:
                             cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
-                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                    stframe.image(frame_rgb, channels="RGB", width=256)
 
                     elapsed = time.time() - start_time
                     time.sleep(max(0.001, delay - elapsed))
@@ -946,7 +946,7 @@ with tabs[2]:
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                    stframe.image(frame_rgb, channels="RGB", width=256)
 
                     elapsed = time.time() - start_time
                     time.sleep(max(0.01, 1/30 - elapsed))  # celuj w 30 FPS
