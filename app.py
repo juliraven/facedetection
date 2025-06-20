@@ -783,7 +783,7 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
-        uploaded_file = m1.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
+        uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
         "przykład 1": "img1.jpg",
         "przykład 2": "img2.jpg",
@@ -792,7 +792,6 @@ with tabs[2]:
     }
 
         selected_example = None
-        target_height = 700  
 
         n1, n2, n3 = st.columns([1,5,1])
         with n2:
@@ -804,9 +803,7 @@ with tabs[2]:
                         selected_example = path
 
                     img = Image.open(path).convert("RGB")
-                    w, h = img.size
-                    img_resized = img.resize((w, target_height))
-                    st.image(img_resized)
+                    st.image(img, use_column_width=True)
 
         image_np = None
 
