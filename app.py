@@ -791,7 +791,7 @@ with tabs[2]:
                 with col:
                     if st.button(f"{label}"):
                         selected_example = path
-                    st.image(path, use_container_width=True)
+                    st.image(path, width=100, height=100)
 
         image_np = None
 
