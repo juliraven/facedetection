@@ -771,8 +771,8 @@ with tabs[2]:
     option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
     if option == "zdjęcie":
-        m1, m2 = st.columns([1,2])
-        m1.write("Wgraj zdjęcie:")
+        m1, m2, m3 = st.columns([1,3,1])
+        m2.write("Wgraj zdjęcie lub wybierz przykład:")
         st.markdown(
         """
         <style>
@@ -794,8 +794,8 @@ with tabs[2]:
         selected_example = None
         target_height = 700  
 
-        with m2:
-            st.write("Wybierz przykład:")
+        n1, n2, n3 = st.column([1,5,1])
+        with n2:
             cols = st.columns(len(example_images))  
 
             for col, (label, path) in zip(cols, example_images.items()):
@@ -829,13 +829,49 @@ with tabs[2]:
             col[1].image(image_np, use_container_width=True)
 
     elif option == "wideo":
-        video_file = st.file_uploader("Wgraj plik wideo:", type=["mp4", "avi", "mov"])
+        m1, m2 = st.columns([1, 2])
+        m1.write("Wgraj plik wideo:")
+        st.markdown(
+        """
+        <style>
+        .stFileUploader label {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+        video_file = m1.file_uploader("", type=["mp4", "avi", "mov"])
+
+        example_videos = {
+        "Wideo 1": "example1.mp4",
+        "Wideo 2": "example2.mp4",
+    }
+
+        selected_video_example = None
+
+        with m2:
+            st.write("Wybierz przykład:")
+            cols = st.columns(len(example_videos))
+
+            for col, (label, path) in zip(cols, example_videos.items()):
+                with col:
+                    if st.button(label):
+                        selected_video_example = path
+                    st.video(path)
+
+        video_path = None
         if video_file is not None:
             tfile = "temp_video.mp4"
             with open(tfile, 'wb') as f:
                 f.write(video_file.read())
+            video_path = tfile
 
-            cap = cv2.VideoCapture(tfile)
+        elif selected_video_example:
+            video_path = selected_video_example
+
+        if video_path:
+            cap = cv2.VideoCapture(video_path)
             stframe = st.empty()
 
             while cap.isOpened():
@@ -854,15 +890,52 @@ with tabs[2]:
             cap.release()
 
     elif option == "GIF":
-        gif_file = st.file_uploader("Wgraj plik GIF:", type=["gif"])
+        m1, m2 = st.columns([1, 2])
+        m1.write("Wgraj plik GIF:")
+        st.markdown(
+        """
+        <style>
+        .stFileUploader label {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+        gif_file = m1.file_uploader("", type=["gif"])
+
+        example_gifs = {
+        "GIF 1": "example1.gif",
+        "GIF 2": "example2.gif",
+    }
+
+        selected_gif_example = None
+
+        with m2:
+            st.write("Wybierz przykład:")
+            cols = st.columns(len(example_gifs))
+
+            for col, (label, path) in zip(cols, example_gifs.items()):
+                with col:
+                    if st.button(label):
+                        selected_gif_example = path
+                    st.image(path, use_column_width=True)
+
+        gif_path = None
         if gif_file is not None:
             gif = Image.open(gif_file)
+        elif selected_gif_example:
+            gif = Image.open(selected_gif_example)
+        else:
+            gif = None
+
+        if gif:
             stframe = st.empty()
 
             try:
                 while True:
                     gif_frame = gif.convert("RGB")
-                    frame_np = np.array(gif_frame)[:, :, ::-1].copy()  # PIL RGB -> OpenCV BGR
+                    frame_np = np.array(gif_frame)[:, :, ::-1].copy()
 
                     boxes, scores = detect_faces(frame_np)
                     for (x1, y1, x2, y2), score in zip(boxes, scores):
@@ -875,7 +948,6 @@ with tabs[2]:
 
             except EOFError:
                 pass
-
 
 
 
