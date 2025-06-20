@@ -115,10 +115,12 @@ import torch.optim as optim
 from tqdm import tqdm
 """)
         st.markdown('## 1.2 Parsowanie pliku adnotacji WIDER Face')
-st.write("""
+st.markdown("""
 Zbiór danych pochodzi ze strony: [https://www.kaggle.com/datasets/iamprateek/wider-face-a-face-detection-dataset](https://www.kaggle.com/datasets/iamprateek/wider-face-a-face-detection-dataset).
 
 Aby móc go wykorzystać w kodzie, należy mieć zapisany folder z plikami o następującej strukturze:
+""")
+st.markdown("""
 ```python
 data/
 └── wider_face_split/
@@ -129,6 +131,8 @@ data/
         └── 1--Handshaking
         └── ...
 ```
+""")
+st.markdown("""
 Do uczenia modelu w tym pliku wykorzystałyśmy 40 wybranych folderów.
 """)
         st.markdown("""
