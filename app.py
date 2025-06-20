@@ -719,8 +719,8 @@ with tabs[2]:
         if not os.path.exists(output_path):
             gdown.download(url, output_path, quiet=False)
 
-    model_file_id = "1_XyIO6P37cPoneyClBHFz9ZYzB1g15Z7"
-    model_path = "model-facedetect.pth"
+    model_file_id = "1f5mfrHLQDT6wfbLmAhbxH1nYwAwjueai"
+    model_path = "model-facedetect-full.pth"
     download_from_gdrive(model_file_id, model_path)
 
     model = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
