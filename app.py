@@ -767,8 +767,8 @@ with tabs[2]:
     
         return filtered_boxes, filtered_scores
 
-
-    option = st.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
+    f1, f2, f3 = st.columns([1,2,1])
+    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
     if option == "zdjęcie":
         m1, m2 = st.columns([1,1])
@@ -785,10 +785,13 @@ with tabs[2]:
 
         with m2:
             st.write("Wybierz przykład:")
-            for label, path in example_images.items():
-                st.image(path, caption=label, width=150)
-                if st.button(f"Użyj {label}"):
-                    selected_example = path
+            cols = st.columns(len(example_images))  
+
+            for col, (label, path) in zip(cols, example_images.items()):
+                with col:
+                    st.image(path, caption=label, use_column_width=True)
+                    if st.button(f"Użyj {label}"):
+                        selected_example = path
 
         image_np = None
 
