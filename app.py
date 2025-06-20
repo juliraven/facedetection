@@ -721,14 +721,14 @@ with tabs[2]:
         if not os.path.exists(output_path):
             gdown.download(url, output_path, quiet=False)
 
-    model_file_id = "1f5mfrHLQDT6wfbLmAhbxH1nYwAwjueai"
-    model_path = "model-facedetect-full.pth"
+    model_file_id = "1535WMpVQNTlCGyPtE23kOg1duZXFLhen"
+    model_path = "model-facedetect.pth"
     download_from_gdrive(model_file_id, model_path)
 
-    num_classes = 2  # tło + twarz
     model = fasterrcnn_resnet50_fpn(weights=None)
     in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2) 
+
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model.eval()
 
