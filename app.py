@@ -862,7 +862,7 @@ with tabs[2]:
                     else:
                         st.video(path)
 
-        path = None
+       path = None
         is_gif = False
 
         if media_file is not None:
@@ -883,9 +883,9 @@ with tabs[2]:
                 path = selected_example
 
         if path:
-            stframe = st.empty()
             resize_to = (256, 256)
-            speed_factor = 1.5  # przyspieszenie odtwarzania np. 1.5x
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model.to(device)
 
             if is_gif:
                 gif = path
@@ -899,8 +899,10 @@ with tabs[2]:
                 width, height = frames[0].size
                 fps = 1000 / np.mean(delays)
 
-                temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-                out = cv2.VideoWriter(temp_video_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+                temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
+                if not out.isOpened():
+                    st.error("Nie udało się otworzyć pliku do zapisu GIF-a jako wideo.")
 
                 for frame in frames:
                     frame_np = np.array(frame)[:, :, ::-1].copy()
@@ -911,34 +913,33 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-            (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-            for (x1, y1, x2, y2) in boxes
-        ]
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
-                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                        c    v2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                        out.write(frame_np)
+                    out.write(frame_np)
 
-                    out.release()
+                out.release()
 
-                with open(temp_video_file.name, "rb") as f:
-                    video_bytes = f.read()
-
-                st.video(BytesIO(video_bytes))
+                with open(temp_file.name, "rb") as f:
+                    st.video(BytesIO(f.read()))
 
             else:
                 cap = cv2.VideoCapture(path)
-                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                out_path = "processed_output.mp4"
                 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                 fps = cap.get(cv2.CAP_PROP_FPS)
-                if fps <= 1.0:  # zabezpieczenie
+                if fps <= 1.0 or fps != fps:
                     fps = 15.0
 
-                out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
+                temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
+                if not out.isOpened():
+                    st.error("Nie udało się otworzyć pliku do zapisu wideo.")
 
                 while cap.isOpened():
                     ret, frame = cap.read()
@@ -952,9 +953,9 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-            (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-            for (x1, y1, x2, y2) in boxes
-        ]
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
@@ -965,7 +966,5 @@ with tabs[2]:
                 cap.release()
                 out.release()
 
-                st.video(out_path)
-
-
-
+                with open(temp_file.name, "rb") as f:
+                    st.video(BytesIO(f.read()))
