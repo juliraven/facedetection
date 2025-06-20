@@ -903,7 +903,7 @@ with tabs[2]:
                     frame_np = np.array(frame)[:, :, ::-1].copy()
                     h, w = frame_np.shape[:2]
                     frame_resized = cv2.resize(frame_np, resize_to)
-                    boxes, scores = detect_faces(frame_resized)
+                    boxes, scores = [], []
 
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
