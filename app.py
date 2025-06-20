@@ -792,7 +792,7 @@ with tabs[2]:
                     if st.button(f"{label}"):
                         selected_example = path
                     image = Image.open(path).resize((100, 100))
-                    st.image(image, width=100, height=100)
+                    st.image(image)
 
         image_np = None
 
