@@ -847,9 +847,10 @@ with tabs[2]:
         "przykład 3": "example3.gif"
     }
 
+        selected_example = None
+        
         n1, n2, n3 = st.columns([1, 5, 1])
         with n2:
-            st.write("Wybierz przykład:")
             cols = st.columns(len(example_media))
             for col, (label, path) in zip(cols, example_media.items()):
                 with col:
