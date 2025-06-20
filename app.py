@@ -704,16 +704,18 @@ with tabs[1]:
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo</h1>", unsafe_allow_html=True)
     st.markdown('')
-
+    
     import os
     import gdown
     import torch
     from torchvision import transforms
+    from torchvision.models.detection import fasterrcnn_resnet50_fpn
+    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
     import numpy as np
     import cv2
     from PIL import Image
     import streamlit as st
-    
+
     def download_from_gdrive(file_id, output_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         if not os.path.exists(output_path):
@@ -723,35 +725,40 @@ with tabs[2]:
     model_path = "model-facedetect-full.pth"
     download_from_gdrive(model_file_id, model_path)
 
-    model = torch.load(model_path, map_location=torch.device('cpu'), weights_only=False)
+    num_classes = 2  # tło + twarz
+    model = fasterrcnn_resnet50_fpn(weights=None)
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model.eval()
 
     transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.Resize((256, 256)),
-    transforms.ToTensor()])
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
+    ])
 
     def detect_faces(image_np):
         original_h, original_w = image_np.shape[:2]
-        image_resized = cv2.resize(image_np, (256, 256))  
-        image_tensor = transform(image_resized).unsqueeze(0)
 
+        if image_np.shape[2] == 3:
+            img = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+        else:
+            img = image_np
+
+        image_tensor = transform(img)  # tensor CxHxW
         with torch.no_grad():
-            prediction = model(image_tensor)[0]
+            prediction = model([image_tensor])[0]
 
-        scale_x = original_w / 256
-        scale_y = original_h / 256
+        boxes = prediction['boxes'].cpu().numpy()
+        scores = prediction['scores'].cpu().numpy()
 
         boxes_scaled = []
-        for box in prediction['boxes']:
-            x1, y1, x2, y2 = box.tolist()
-            x1 = int(x1 * scale_x)
-            x2 = int(x2 * scale_x)
-            y1 = int(y1 * scale_y)
-            y2 = int(y2 * scale_y)
-            boxes_scaled.append((x1, y1, x2, y2))
+        for box in boxes:
+            x1, y1, x2, y2 = box
+            boxes_scaled.append((int(x1), int(y1), int(x2), int(y2)))
 
-        return boxes_scaled, prediction['scores']
+        return boxes_scaled, scores
 
     option = st.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
@@ -759,7 +766,7 @@ with tabs[2]:
         uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
-            image_np = np.array(image)
+            image_np = np.array(image)[:, :, ::-1].copy()  # PIL RGB -> OpenCV BGR
 
             boxes, scores = detect_faces(image_np)
 
@@ -767,7 +774,8 @@ with tabs[2]:
                 if score > 0.5:
                     cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-            st.image(image_np, use_container_width=True)
+            image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+            st.image(image_rgb, use_container_width=True)
 
     elif option == "wideo":
         video_file = st.file_uploader("Wgraj plik wideo:", type=["mp4", "avi", "mov"])
@@ -794,7 +802,6 @@ with tabs[2]:
 
             cap.release()
 
-
     elif option == "GIF":
         gif_file = st.file_uploader("Wgraj plik GIF:", type=["gif"])
         if gif_file is not None:
@@ -804,18 +811,20 @@ with tabs[2]:
             try:
                 while True:
                     gif_frame = gif.convert("RGB")
-                    frame_np = np.array(gif_frame)
+                    frame_np = np.array(gif_frame)[:, :, ::-1].copy()  # PIL RGB -> OpenCV BGR
 
                     boxes, scores = detect_faces(frame_np)
                     for (x1, y1, x2, y2), score in zip(boxes, scores):
                         if score > 0.5:
                             cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    stframe.image(frame_np, channels="RGB", use_column_width=True)
+                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
+                    stframe.image(frame_rgb, channels="RGB", use_column_width=True)
                     gif.seek(gif.tell() + 1)
 
             except EOFError:
-                pass  
+                pass
+
 
 
 
