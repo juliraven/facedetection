@@ -732,33 +732,40 @@ with tabs[2]:
     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     model.eval()
 
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-    ])
-
     def detect_faces(image_np):
         original_h, original_w = image_np.shape[:2]
-
-        if image_np.shape[2] == 3:
-            img = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-        else:
-            img = image_np
-
-        image_tensor = transform(img)  # tensor CxHxW
+        image_resized = cv2.resize(image_np, (256, 256))
+    
+        transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.ToTensor()
+    ])
+    
+        image_tensor = transform(image_resized).to(device)
+        model.eval()
         with torch.no_grad():
-            prediction = model([image_tensor])[0]
-
-        boxes = prediction['boxes'].cpu().numpy()
-        scores = prediction['scores'].cpu().numpy()
-
+            outputs = model([image_tensor])
+    
+        boxes = outputs[0]['boxes'].cpu().numpy()
+        scores = outputs[0]['scores'].cpu().numpy()
+    
+        scale_x = original_w / 256
+        scale_y = original_h / 256
+    
         boxes_scaled = []
         for box in boxes:
             x1, y1, x2, y2 = box
-            boxes_scaled.append((int(x1), int(y1), int(x2), int(y2)))
+            x1 = int(x1 * scale_x)
+            y1 = int(y1 * scale_y)
+            x2 = int(x2 * scale_x)
+            y2 = int(y2 * scale_y)
+            boxes_scaled.append((x1, y1, x2, y2))
+    
+        filtered_boxes = [box for box, score in zip(boxes_scaled, scores) if score > 0.5]
+        filtered_scores = [score for score in scores if score > 0.5]
+    
+        return filtered_boxes, filtered_scores
 
-        return boxes_scaled, scores
 
     option = st.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
@@ -775,7 +782,8 @@ with tabs[2]:
                     cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
             image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-            st.image(image_rgb, use_container_width=True)
+            col = st.columns([1,2,1])
+            col[1].image(image_rgb, use_container_width=True)
 
     elif option == "wideo":
         video_file = st.file_uploader("Wgraj plik wideo:", type=["mp4", "avi", "mov"])
