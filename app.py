@@ -803,7 +803,7 @@ with tabs[2]:
                         selected_example = path
 
                     img = Image.open(path).convert("RGB")
-                    st.image(img, use_column_width=True)
+                    st.image(img, use_container_width=True)
 
         image_np = None
 
