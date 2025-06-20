@@ -933,21 +933,35 @@ with tabs[2]:
             try:
                 while True:
                     gif_frame = gif.convert("RGB")
-                    frame_np = np.array(gif_frame)[:, :, ::-1].copy()
+                    frame_np_original = np.array(gif_frame)[:, :, ::-1].copy()  # BGR
 
-                    boxes, scores = detect_faces(frame_np)
-                    for (x1, y1, x2, y2), score in zip(boxes, scores):
+                    original_h, original_w = frame_np_original.shape[:2]
+                    frame_resized = cv2.resize(frame_np_original, (256, 256))
+                    boxes, scores = detect_faces(frame_resized)
+
+                    scale_x = original_w / 256
+                    scale_y = original_h / 256
+                    boxes_scaled = []
+                    for box in boxes:
+                        x1, y1, x2, y2 = box
+                        x1 = int(x1 * scale_x)
+                        y1 = int(y1 * scale_y)
+                        x2 = int(x2 * scale_x)
+                        y2 = int(y2 * scale_y)
+                        boxes_scaled.append((x1, y1, x2, y2))
+
+                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
-                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                            cv2.rectangle(frame_np_original, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
+                    frame_rgb = cv2.cvtColor(frame_np_original, cv2.COLOR_BGR2RGB)
                     stframe.image(frame_rgb, channels="RGB", use_column_width=True)
 
-                    delay = gif.info.get("duration", 100) 
-                    time.sleep(delay / 1000.0) 
+                    delay = gif.info.get("duration", 100)
+                    time.sleep(delay / 1000.0)
 
                     gif.seek(gif.tell() + 1)
-            except EOFError:
+        except EOFError:
                 pass
 
 
