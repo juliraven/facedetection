@@ -789,7 +789,7 @@ with tabs[2]:
 
             for col, (label, path) in zip(cols, example_images.items()):
                 with col:
-                    st.image(path, caption=label, use_column_width=True)
+                    st.image(path, caption=label, use_container_width=True)
                     if st.button(f"Użyj {label}"):
                         selected_example = path
 
