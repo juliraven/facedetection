@@ -774,6 +774,16 @@ with tabs[2]:
     if option == "zdjęcie":
         m1, m2 = st.columns([1,1])
         m1.write("Wgraj zdjęcie:")
+        st.markdown(
+        """
+        <style>
+        .stFileUploader label {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
         uploaded_file = m1.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
         "przykład 1": "img1.jpg",
@@ -796,8 +806,7 @@ with tabs[2]:
 
                     img = Image.open(path).convert("RGB")
                     w, h = img.size
-                    new_width = int((target_height / h) * w)
-                    img_resized = img.resize((new_width, target_height))
+                    img_resized = img.resize((w, target_height))
                     st.image(img_resized)
 
         image_np = None
