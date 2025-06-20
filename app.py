@@ -768,7 +768,7 @@ with tabs[2]:
         return filtered_boxes, filtered_scores
 
     f1, f2, f3 = st.columns([1,2,1])
-    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
+    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo\GIF"])
 
     if option == "zdjęcie":
         m1, m2, m3 = st.columns([1,3,1])
@@ -785,10 +785,10 @@ with tabs[2]:
     )
         uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
-        "zdjęcie 1": "img1.jpg",
-        "zdjęcie 2": "img2.jpg",
-        "zdjęcie 3": "img3.jpg",
-        "zdjęcie 4": "img4.jpg",
+        "przykład 1": "img1.jpg",
+        "przykład 2": "img2.jpg",
+        "przykład 3": "img3.jpg",
+        "przykład 4": "img4.jpg",
     }
 
         selected_example = None
@@ -825,72 +825,11 @@ with tabs[2]:
             col = st.columns([1,2,1])
             col[1].image(image_np, use_container_width=True)
 
-    elif option == "wideo":
-        m1, m2 = st.columns([1, 2])
-        m1.write("Wgraj plik wideo:")
-        st.markdown(
-        """
-        <style>
-        .stFileUploader label {
-            display: none;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-        video_file = m1.file_uploader("", type=["mp4", "avi", "mov"])
-
-        example_videos = {
-        "Wideo 1": "example1.mp4",
-        "Wideo 2": "example2.mp4",
-    }
-
-        selected_video_example = None
-
-        with m2:
-            st.write("Wybierz przykład:")
-            cols = st.columns(len(example_videos))
-
-            for col, (label, path) in zip(cols, example_videos.items()):
-                with col:
-                    if st.button(label):
-                        selected_video_example = path
-                    st.video(path)
-
-        video_path = None
-        if video_file is not None:
-            tfile = "temp_video.mp4"
-            with open(tfile, 'wb') as f:
-                f.write(video_file.read())
-            video_path = tfile
-
-        elif selected_video_example:
-            video_path = selected_video_example
-
-        if video_path:
-            cap = cv2.VideoCapture(video_path)
-            stframe = st.empty()
-
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if not ret:
-                    break
-
-                boxes, scores = detect_faces(frame)
-                for (x1, y1, x2, y2), score in zip(boxes, scores):
-                    if score > 0.5:
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                stframe.image(frame_rgb, channels="RGB", use_column_width=True)
-
-            cap.release()
-
-    elif option == "GIF":
+    elif option == "wideo/GIF":
         import time
         m1, m2, m3 = st.columns([1, 3, 1])
-        m2.write("Wgraj plik GIF lub wybierz przykład:")
-        st.markdown(
+        m2.write("Wgraj plik wideo/GIF l ub wybierz przykład:")
+    st.markdown(
         """
         <style>
         .stFileUploader label {
@@ -900,38 +839,53 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
-        gif_file = m2.file_uploader("", type=["gif"])
+    media_file = m2.file_uploader("", type=["mp4", "avi", "mov", "gif"])
 
-        example_gifs = {
-        "GIF 1": "example1.gif",
-        "GIF 2": "example2.gif",
-        "GIF 3": "example3.gif"
+    example_media = {
+        "przykład 1": "example1.gif",
+        "przykład 2": "example2.gif",
+        "przykład 3": "example3.gif"
     }
 
-        selected_gif_example = None
+    selected_example = None
 
-        n1, n2, n3 = st.columns([1,5,1])
-        with n2:
-            st.write("Wybierz przykład:")
-            cols = st.columns(len(example_gifs))
-
-            for col, (label, path) in zip(cols, example_gifs.items()):
-                with col:
-                    if st.button(label):
-                        selected_gif_example = path
+    n1, n2, n3 = = st.columns([1,5,1])
+    with n2:
+        st.write("Wybierz przykład:")
+        cols = st.columns(len(example_media))
+        for col, (label, path) in zip(cols, example_media.items()):
+            with col:
+                if st.button(label):
+                    selected_example = path
+                if path.endswith(".gif"):
                     st.image(path, use_container_width=True)
+                else:
+                    st.video(path)
 
-        gif_path = None
-        if gif_file is not None:
-            gif = Image.open(gif_file)
-        elif selected_gif_example:
-            gif = Image.open(selected_gif_example)
+    path = None
+    is_gif = False
+    if media_file is not None:
+        file_ext = media_file.name.split('.')[-1].lower()
+        if file_ext == "gif":
+            is_gif = True
+            path = Image.open(media_file)
         else:
-            gif = None
+            tfile = "temp_video." + file_ext
+            with open(tfile, 'wb') as f:
+                f.write(media_file.read())
+            path = tfile
+    elif selected_example:
+        if selected_example.endswith(".gif"):
+            is_gif = True
+            path = Image.open(selected_example)
+        else:
+            path = selected_example
 
-        if gif:
-            stframe = st.empty()
+    if path:
+        stframe = st.empty()
 
+        if is_gif:
+            gif = path
             try:
                 while True:
                     gif_frame = gif.convert("RGB")
@@ -943,28 +897,51 @@ with tabs[2]:
 
                     scale_x = original_w / 256
                     scale_y = original_h / 256
-                    boxes_scaled = []
-                    for box in boxes:
-                        x1, y1, x2, y2 = box
-                        x1 = int(x1 * scale_x)
-                        y1 = int(y1 * scale_y)
-                        x2 = int(x2 * scale_x)
-                        y2 = int(y2 * scale_y)
-                        boxes_scaled.append((x1, y1, x2, y2))
+                    boxes_scaled = [
+                        (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                        for (x1, y1, x2, y2) in boxes
+                    ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
                             cv2.rectangle(frame_np_original, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     frame_rgb = cv2.cvtColor(frame_np_original, cv2.COLOR_BGR2RGB)
-                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                    stframe.image(frame_rgb, channels="RGB", use_column_width=True)
 
                     delay = gif.info.get("duration", 100)
                     time.sleep(delay / 1000.0)
 
                     gif.seek(gif.tell() + 1)
             except EOFError:
-                    pass
+                pass
+
+        else:
+            cap = cv2.VideoCapture(path)
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break
+
+                original_h, original_w = frame.shape[:2]
+                frame_resized = cv2.resize(frame, (256, 256))
+                boxes, scores = detect_faces(frame_resized)
+
+                scale_x = original_w / 256
+                scale_y = original_h / 256
+                boxes_scaled = [
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
+
+                for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
+                    if score > 0.5:
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                stframe.image(frame_rgb, channels="RGB", use_column_width=True)
+
+            cap.release()
 
 
 
