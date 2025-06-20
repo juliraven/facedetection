@@ -81,9 +81,9 @@ with cols[1]:
     st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
     with styled_container:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
-        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także w czasie rzeczywistym, np. z kamery w laptopie. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
+        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/gifach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
 
-tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu", "Testuj na żywo"])
+tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu/wideo"])
 
 with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy - kod</h1>", unsafe_allow_html=True)
@@ -438,20 +438,18 @@ with tabs[1]:
 """)
 
 with tabs[2]:
-    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo</h1>", unsafe_allow_html=True)
     st.markdown('')
 
     import os
     import gdown
     import torch
     from torchvision import transforms
-    from torchvision.models.detection import fasterrcnn_resnet50_fpn
-    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
     import numpy as np
     import cv2
     from PIL import Image
     import streamlit as st
-
+    
     def download_from_gdrive(file_id, output_path):
         url = f"https://drive.google.com/uc?id={file_id}"
         if not os.path.exists(output_path):
@@ -471,8 +469,7 @@ with tabs[2]:
 
     def detect_faces(image_np):
         original_h, original_w = image_np.shape[:2]
-
-        image_resized = cv2.resize(image_np, (256, 256))  # rozmiar zgodny z transform
+        image_resized = cv2.resize(image_np, (256, 256))  
         image_tensor = transform(image_resized).unsqueeze(0)
 
         with torch.no_grad():
@@ -492,55 +489,72 @@ with tabs[2]:
 
         return boxes_scaled, prediction['scores']
 
-    uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
-        image_np = np.array(image)
+    option = st.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
-        boxes, scores = detect_faces(image_np)
+    if option == "zdjęcie":
+        uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file).convert("RGB")
+            image_np = np.array(image)
 
-        for (x1, y1, x2, y2), score in zip(boxes, scores):
-            if score > 0.5:
-                cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            boxes, scores = detect_faces(image_np)
 
-        st.image(image_np, caption="Wykryte twarze", use_container_width=True)
-
-
-with tabs[3]:
-    st.markdown("<h1 style='text-align: center;'>Testuj na żywo</h1>", unsafe_allow_html=True)
-
-    from streamlit_webrtc import VideoTransformerBase
-    import cv2
-    import torch
-    from streamlit_webrtc import webrtc_streamer
-
-    class FaceDetector(VideoTransformerBase):
-        def transform(self, frame):
-            img = frame.to_ndarray(format="bgr24")
-            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        
-            original_h, original_w = img.shape[:2]
-            img_resized = cv2.resize(img_rgb, (256, 256))
-            image_tensor = transform(img_resized).unsqueeze(0)
-        
-            with torch.no_grad():
-                prediction = model(image_tensor)[0]
-        
-            scale_x = original_w / 256
-            scale_y = original_h / 256
-        
-            for box, score in zip(prediction['boxes'], prediction['scores']):
+            for (x1, y1, x2, y2), score in zip(boxes, scores):
                 if score > 0.5:
-                    x1, y1, x2, y2 = box.tolist()
-                    x1 = int(x1 * scale_x)
-                    x2 = int(x2 * scale_x)
-                    y1 = int(y1 * scale_y)
-                    y2 = int(y2 * scale_y)
-                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        
-            return img
+                    cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-    webrtc_streamer(key="face-detection", video_processor_factory=FaceDetector)
+            st.image(image_np, use_container_width=True)
+
+    elif option == "wideo":
+        video_file = st.file_uploader("Wgraj plik wideo:", type=["mp4", "avi", "mov"])
+        if video_file is not None:
+            tfile = "temp_video.mp4"
+            with open(tfile, 'wb') as f:
+                f.write(video_file.read())
+
+            cap = cv2.VideoCapture(tfile)
+            stframe = st.empty()
+
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    break
+
+                boxes, scores = detect_faces(frame)
+                for (x1, y1, x2, y2), score in zip(boxes, scores):
+                    if score > 0.5:
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                stframe.image(frame_rgb, channels="RGB", use_column_width=True)
+
+            cap.release()
+
+
+    elif option == "GIF":
+        gif_file = st.file_uploader("Wgraj plik GIF:", type=["gif"])
+        if gif_file is not None:
+            gif = Image.open(gif_file)
+            stframe = st.empty()
+
+            try:
+                while True:
+                    gif_frame = gif.convert("RGB")
+                    frame_np = np.array(gif_frame)
+
+                    boxes, scores = detect_faces(frame_np)
+                    for (x1, y1, x2, y2), score in zip(boxes, scores):
+                        if score > 0.5:
+                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+                    stframe.image(frame_np, channels="RGB", use_column_width=True)
+                    gif.seek(gif.tell() + 1)
+
+            except EOFError:
+                pass  
+
+
+
 
 
 
