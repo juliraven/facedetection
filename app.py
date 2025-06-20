@@ -82,7 +82,7 @@ with cols[1]:
     st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
     with styled_container:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
-        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/gifach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
+        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
 
 tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj na zdjęciu/wideo"])
 
@@ -702,7 +702,7 @@ with tabs[1]:
 """)
 
 with tabs[2]:
-    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
     
     import os
     import gdown
@@ -785,10 +785,10 @@ with tabs[2]:
     )
         uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
         example_images = {
-        "przykład 1": "img1.jpg",
-        "przykład 2": "img2.jpg",
-        "przykład 3": "img3.jpg",
-        "przykład 4": "img4.jpg",
+        "zdjęcie 1": "img1.jpg",
+        "zdjęcie 2": "img2.jpg",
+        "zdjęcie 3": "img3.jpg",
+        "zdjęcie 4": "img4.jpg",
     }
 
         selected_example = None
@@ -903,7 +903,9 @@ with tabs[2]:
         gif_file = m2.file_uploader("", type=["gif"])
 
         example_gifs = {
-        "GIF 1": "example1.gif"
+        "GIF 1": "example1.gif",
+        "GIF 2": "example2.gif",
+        "GIF 3": "example3.gif"
     }
 
         selected_gif_example = None
