@@ -887,8 +887,8 @@ with tabs[2]:
             cap.release()
 
     elif option == "GIF":
-        m1, m2 = st.columns([1, 2])
-        m1.write("Wgraj plik GIF:")
+        m1, m2, m3 = st.columns([1, 3, 1])
+        m2.write("Wgraj plik GIF lub wybierz przykład:")
         st.markdown(
         """
         <style>
@@ -899,7 +899,7 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
-        gif_file = m1.file_uploader("", type=["gif"])
+        gif_file = m2.file_uploader("", type=["gif"])
 
         example_gifs = {
         "GIF 1": "example1.gif",
@@ -908,7 +908,8 @@ with tabs[2]:
 
         selected_gif_example = None
 
-        with m2:
+        n1, n2, n3 = st.columns([1,5,1])
+        with n2:
             st.write("Wybierz przykład:")
             cols = st.columns(len(example_gifs))
 
