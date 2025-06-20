@@ -262,46 +262,50 @@ class WiderFaceDataset(Dataset):
         st.markdown("""
 ```python
 transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.Resize((256, 256)),  # ustalony rozmiar
-    transforms.ToTensor()
+    transforms.ToPILImage(), # konwersja obrazu z numpy na obiekt PIL.Image
+    transforms.Resize((256, 256)),  # zmiana rozmiaru na (256 x 256)
+    transforms.ToTensor() # konwersja obrazu PIL na tensor pytorch (normalizowany do zakresu [0,1])
 ])
 
 dataset = WiderFaceDataset(
-    images_dir='data/WIDER_train/images',
-    annotations=annotations,
-    transform=transform
+    images_dir='data/WIDER_train/images', # ścieżka dokatalogu z obrazkami
+    annotations=annotations, # adnotacje 
+    transform=transform # przekształcenia
 )
 """)
         st.markdown('## 2.2 Tworzenie dataloadera')
         st.markdown("""
 ```python
+# funkcja do grupowania danych w batchu: [(img1, target1), (img2, target2), ...] -> ([img1, img2, ...], [target1, target2, ...])
 def collate_fn(batch):
     return tuple(zip(*batch))
 
+# dataLoader, który będzie ładował dane do modelu w batchach (po 4 przykłady na raz)
 dataloader = DataLoader(dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
-)
 """)
         st.markdown('## 2.3 Wyświetlanie przykładowego batcha obrazów z bboxami')
         st.markdown("""
 ```python
-batch = next(iter(dataloader))
-images, bboxes_batch = batch 
+batch = next(iter(dataloader)) # pobranie batcha (lista obrazów, lista targetów)
+images, bboxes_batch = batch # rozpakowanie batcha na obrazy i odpowiadające im adnotacje 
 
-fig, axs = plt.subplots(1, 4, figsize=(20,5))
+fig, axs = plt.subplots(1, 4, figsize=(20,5)) # siatka 4 przykładowych obrazków
 for i in range(4):
     img = images[i].permute(1, 2, 0).numpy()
-    axs[i].imshow(img)
+    axs[i].imshow(img) # wyświetlenie obrazka
     axs[i].axis('off')
     
-    bboxes = bboxes_batch[i]['boxes'].cpu().numpy()
+    bboxes = bboxes_batch[i]['boxes'].cpu().numpy() # pobranie bboxów (w formacie [xmin, ymin, xmax, ymax]) dla obrazka
+
+    # dla każdego bboxa rysowany jest prostokąt na obrazie
     for box in bboxes:
         x_min, y_min, x_max, y_max = box
         rect = patches.Rectangle((x_min, y_min), x_max - x_min, y_max - y_min, 
                                  linewidth=2, edgecolor='r', facecolor='none')
-        axs[i].add_patch(rect)
-plt.show())
+        axs[i].add_patch(rect) # dodanie bboxa do wykresu
+plt.show()
 """)
+        st.write('Przykładowy batch:')
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.image('svg1.svg')
@@ -324,64 +328,66 @@ print(f"\n Uruchomiono na: {'GPU' if device.type == 'cuda' else 'CPU'}")
         st.markdown('# 3. Podział danych i utworzenie dataloaderów')
         st.markdown("""
 ```python
-# rozmiary podzbiorów:
+# rozmiary zbiorów:
 train_size = int(0.7 * len(dataset))
 val_size = int(0.15 * len(dataset))
 test_size = len(dataset) - train_size - val_size
 
-# podział:
+# podział na zbiory danych — odpowiedzialne za ładowanie danych w batchach:
 train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
 
 # dataloadery:
 train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
-val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, collate_fn=collate_fn)
-test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False, collate_fn=collate_fn)
+val_loader = DataLoader(val_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
+test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 """)
         st.markdown('# 4. Przygotowanie modelu i trening')
         st.markdown("""
 ```python
-from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT # wczytanie wag dla modelu Faster R-CNN z ResNet50 + FPN
+model = fasterrcnn_resnet50_fpn(weights=weights) 
 
-weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT
-model = fasterrcnn_resnet50_fpn(weights=weights)
+num_classes = 2  # ustawienie liczbęy klas — 1 klasa + tło 
+in_features = model.roi_heads.box_predictor.cls_score.in_features # pobranie liczby wejściowych cech
+model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes) # zamiana domyślnej warstwy na taką, która obsługuje 2 klasy
 
-num_classes = 2
-in_features = model.roi_heads.box_predictor.cls_score.in_features
-model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+model.to(device) # przeniesienie modelu na GPU (jeśli dostępne), jeśli nie na CPU
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model.to(device)
-
+# optymalizator i liczba epok 
 optimizer = optim.SGD(model.parameters(), lr=0.005, momentum=0.9, weight_decay=0.0005)
 num_epochs = 50
 
+# listy do przechowywania strat z treningu i walidacji
 train_losses = []
 val_losses = []
 
-# trening:
+# uczenie
 for epoch in range(num_epochs):
     model.train()
     total_loss = 0
 
     train_loop = tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Train", leave=False)
     for images, targets in train_loop:
-        images = [img.to(device) for img in images]
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+        images = [img.to(device) for img in images] # przeniesienie danych na odpowiednie urządzenie
+        targets = [{k: v.to(device) for k, v in t.items()} for t in targets] 
+
+        # pomijanie batchy bez boxów
+        if not all(len(t["boxes"]) > 0 for t in targets):
+            continue  
 
         optimizer.zero_grad()
-        loss_dict = model(images, targets)
+        loss_dict = model(images, targets) # obliczanie strat
         losses = sum(loss for loss in loss_dict.values())
-        losses.backward()
-        optimizer.step()
+        losses.backward() # propagacja wsteczna
+        optimizer.step() # aktualizaccja wag
 
         total_loss += losses.item()
-        train_loop.set_postfix(loss=losses.item())
+        train_loop.set_postfix(loss=losses.item()) # pokazanie straty w pasku postępu
 
-    avg_train_loss = total_loss / len(train_loader)
+    avg_train_loss = total_loss / len(train_loader) # średnia strata z epoki
 
-    # walidacja:
-    model.eval() 
+    # walidacja
+    model.eval()  
     val_loss = 0
 
     with torch.no_grad():
@@ -390,18 +396,35 @@ for epoch in range(num_epochs):
             images = [img.to(device) for img in images]
             targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-            loss_dict = model(images, targets)
-            losses = sum(loss for loss in loss_dict.values())
+            # pomijanie batchy bez boxów
+            if not all(len(t["boxes"]) > 0 for t in targets):
+                val_loop.set_postfix(skip="empty targets")
+                continue  
+
+            loss_dict = model(images, targets) # obliczanie strat
+
+            if isinstance(loss_dict, dict):
+                losses = sum(loss for loss in loss_dict.values())
+            else:
+                val_loop.set_postfix(warning="model returned predictions, not loss")
+                continue
+
             val_loss += losses.item()
             val_loop.set_postfix(val_loss=losses.item())
 
-    avg_val_loss = val_loss / len(val_loader)
+    # średnia strata
+    if len(val_loader) > 0:
+        avg_val_loss = val_loss / len(val_loader)
+    else:
+        avg_val_loss = 0.0
 
+    # zapis strat
     train_losses.append(avg_train_loss)
     val_losses.append(avg_val_loss)
 
     print(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
 
+# wykres strat
 plt.figure(figsize=(10,5))
 plt.plot(train_losses, label='Train Loss')
 plt.plot(val_losses, label='Val Loss')
@@ -414,8 +437,200 @@ plt.show()
         st.markdown('# 5. Testowanie i wizualizacja wyników')
         st.markdown("""
 ```python
+def compute_iou(box1, box2):
 
+    # obliczanie współrzędnych prostokąta
+    x1 = max(box1[0], box2[0])
+    y1 = max(box1[1], box2[1])
+    x2 = min(box1[2], box2[2])
+    y2 = min(box1[3], box2[3])
+
+    # obszar części wspólnej (intersection)
+    inter_area = max(0, x2 - x1) * max(0, y2 - y1)
+
+    # obszary pojedynczych bboxów
+    area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+
+    # obszar łączny (union)
+    union_area = area1 + area2 - inter_area
+    if union_area == 0:
+        return 0.0
+    return inter_area / union_area # IoU (Intersection over Union)
+
+def evaluate(model, dataloader, device, iou_threshold=0.5, score_threshold=0.5):
+    model.eval()
+    precisions = []
+    recalls = []
+    f1_scores = []
+
+    with torch.no_grad():
+        for images, targets in tqdm(dataloader, desc="Evaluating"):
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+
+            outputs = model(images)
+
+            for output, target in zip(outputs, targets):
+                pred_boxes = output['boxes'].cpu()
+                pred_scores = output['scores'].cpu()
+                gt_boxes = target['boxes'].cpu()
+                matched_gt = set()
+
+                tp = 0
+                fp = 0
+
+                for pred_box, score in zip(pred_boxes, pred_scores):
+                    if score < score_threshold:
+                        continue
+
+                    best_iou = 0
+                    best_gt_idx = -1
+
+                    for j, gt_box in enumerate(gt_boxes):
+                        if j in matched_gt:
+                            continue
+                        iou = compute_iou(pred_box, gt_box)
+                        if iou > best_iou:
+                            best_iou = iou
+                            best_gt_idx = j
+
+                    if best_iou >= iou_threshold:
+                        tp += 1
+                        matched_gt.add(best_gt_idx)
+                    else:
+                        fp += 1
+
+                fn = len(gt_boxes) - len(matched_gt)
+
+                precision = tp / (tp + fp + 1e-6) if (tp + fp) > 0 else 0.0
+                recall = tp / (tp + fn + 1e-6) if (tp + fn) > 0 else 0.0
+                f1 = 2 * precision * recall / (precision + recall + 1e-6) if (precision + recall) > 0 else 0.0
+
+                precisions.append(precision)
+                recalls.append(recall)
+                f1_scores.append(f1)
+
+    avg_precision = sum(precisions) / len(precisions)
+    avg_recall = sum(recalls) / len(recalls)
+    avg_f1 = sum(f1_scores) / len(f1_scores)
+
+    print(f"Precyzja: {avg_precision:.4f}")
+    print(f"Czułość: {avg_recall:.4f}")
+    print(f"F1 score: {avg_f1:.4f}")
+
+    return avg_precision, avg_recall, avg_f1
+
+def visualize_predictions_vs_real(model, dataloader, device, score_threshold=0.5, max_images=20):
+    model.eval()
+    rows, cols = 4, 5
+    count = 0
+    fig, axes = plt.subplots(rows, cols, figsize=(cols * 4, rows * 4))
+    axes = axes.flatten()
+
+    with torch.no_grad():
+        for images, targets in dataloader:
+            images = [img.to(device) for img in images]
+            outputs = model(images)
+
+            for i in range(len(images)):
+                if count >= max_images:
+                    for j in range(count, rows * cols):
+                        axes[j].axis('off')
+                    plt.tight_layout()
+                    plt.show()
+                    return
+
+                img = images[i].permute(1, 2, 0).cpu().numpy()
+                pred_boxes = outputs[i]['boxes'].detach().cpu().numpy()
+                pred_scores = outputs[i]['scores'].detach().cpu().numpy()
+                gt_boxes = targets[i]['boxes'].cpu().numpy()
+                ax = axes[count]
+                ax.imshow(img)
+
+                for box in gt_boxes:
+                    x1, y1, x2, y2 = box
+                    rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
+                                             linewidth=2, edgecolor='red', facecolor='none')
+                    ax.add_patch(rect)
+
+                for box, score in zip(pred_boxes, pred_scores):
+                    if score >= score_threshold:
+                        x1, y1, x2, y2 = box
+                        rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
+                                                 linewidth=2, edgecolor='lime', facecolor='none')
+                        ax.add_patch(rect)
+                        ax.text(x1, y1 - 5, f'{score:.2f}', color='lime', fontsize=6)
+
+                ax.set_title(f"Zielone: przewidywane | Czerwone: rzeczywiste")
+                ax.axis('off')
+                count += 1
+
+    for j in range(count, rows * cols):
+        axes[j].axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+def save_all_predictions(model, dataloader, device, score_threshold=0.5, output_dir='predykcje'):
+    model.eval()
+    os.makedirs(output_dir, exist_ok=True)
+    count = 0
+
+    with torch.no_grad():
+        for images, targets in dataloader:
+            images = [img.to(device) for img in images]
+            outputs = model(images)
+
+            for i in range(len(images)):
+                img = images[i].permute(1, 2, 0).cpu().numpy()
+                pred_boxes = outputs[i]['boxes'].detach().cpu().numpy()
+                pred_scores = outputs[i]['scores'].detach().cpu().numpy()
+                gt_boxes = targets[i]['boxes'].cpu().numpy()
+
+                fig, ax = plt.subplots(1, figsize=(6, 6))
+                ax.imshow(img)
+
+                for box in gt_boxes:
+                    x1, y1, x2, y2 = box
+                    rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
+                                             linewidth=2, edgecolor='red', facecolor='none')
+                    ax.add_patch(rect)
+
+                for box, score in zip(pred_boxes, pred_scores):
+                    if score >= score_threshold:
+                        x1, y1, x2, y2 = box
+                        rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
+                                                 linewidth=2, edgecolor='lime', facecolor='none')
+                        ax.add_patch(rect)
+                        ax.text(x1, y1 - 5, f'{score:.2f}', color='lime', fontsize=6)
+
+                ax.axis('off')
+                plt.tight_layout()
+                filepath = os.path.join(output_dir, f'predykcja_{count+1:04}.png')
+                plt.savefig(filepath, bbox_inches='tight', pad_inches=0.1)
+                plt.close(fig)
+                count += 1
+
+    print(f"Zapisano {count} obrazów do folderu '{output_dir}'.")
+
+visualize_predictions_vs_real(model, test_loader, device)
+evaluate(model, test_loader, device)
+save_all_predictions(model, test_loader, device)
 """)
+
+        st.write('Przykładowe wyniki (czerwone: rzeczywiste, zielone: przewidywane')
+
+        data = {
+    "Precyzja (%)": [0.7062 * 100],
+    "Czułość (%)": [0.8003 * 100],
+    "F1 score (%)": [0.7243 * 100]
+}
+
+        df = pd.DataFrame(data)
+        st.title("Wartości miar jakości dla modelu wykrywania twarzy:")
+        col1, col2, col3 = st.columns([1,3,1])
+        col2.table(df.style.format("{:.2f}"))
         st.markdown('# 6. Zapisanie modelu')
         st.markdown("""
 ```python
