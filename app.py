@@ -887,6 +887,7 @@ with tabs[2]:
             cap.release()
 
     elif option == "GIF":
+        import time
         m1, m2, m3 = st.columns([1, 3, 1])
         m2.write("Wgraj plik GIF lub wybierz przykład:")
         st.markdown(
@@ -941,11 +942,13 @@ with tabs[2]:
 
                     frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
                     stframe.image(frame_rgb, channels="RGB", use_column_width=True)
-                    gif.seek(gif.tell() + 1)
 
-            except EOFError:
-                pass
+                    delay = gif.info.get("duration", 100) 
+                    time.sleep(delay / 1000.0) 
 
+        gif.seek(gif.tell() + 1)
+except EOFError:
+    pass
 
 
 
