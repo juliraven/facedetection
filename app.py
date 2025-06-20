@@ -894,12 +894,13 @@ with tabs[2]:
                     frames.append(frame.convert("RGB"))
                     delays.append(max(20, frame.info.get("duration", 100)))  # ms
 
-                for i in range(len(frames)):
-                    frame = frames[i]
-                    delay = delays[i] / 1000.0 / speed_factor
+                out_path = "processed_gif_output.mp4"
+                width, height = frames[0].size
+                fps = 1000 / np.mean(delays)
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
 
-                    start_time = time.time()
-
+                for frame in frames:
                     frame_np = np.array(frame)[:, :, ::-1].copy()
                     h, w = frame_np.shape[:2]
                     frame_resized = cv2.resize(frame_np, resize_to)
@@ -908,24 +909,34 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
+            (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+            for (x1, y1, x2, y2) in boxes
+        ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
                             cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
-                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
+                    out.write(frame_np)
 
-                    elapsed = time.time() - start_time
-                    time.sleep(max(0.001, delay - elapsed))
+                out.release()
+
+                st.video(out_path)
+
 
             else:
                 cap = cv2.VideoCapture(path)
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                out_path = "processed_output.mp4"
+                width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                fps = cap.get(cv2.CAP_PROP_FPS)
+                if fps <= 1.0:  # zabezpieczenie
+                    fps = 15.0
+
+                out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
+
                 while cap.isOpened():
-                    start_time = time.time()
                     ret, frame = cap.read()
                     if not ret:
                         break
@@ -937,20 +948,20 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
+            (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+            for (x1, y1, x2, y2) in boxes
+        ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    stframe.image(frame_rgb, channels="RGB", use_container_width=True)
-
-                    elapsed = time.time() - start_time
-                    time.sleep(max(0.01, 1/30 - elapsed))  # celuj w 30 FPS
+                    out.write(frame)
 
                 cap.release()
+                out.release()
+
+                st.video(out_path)
+
 
 
