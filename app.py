@@ -643,18 +643,43 @@ evaluate(model, test_loader, device)
 save_all_predictions(model, test_loader, device)
 """)
 
-        st.write('Przykładowe wyniki (czerwone: rzeczywiste, zielone: przewidywane')
+        st.write('Przykładowe wyniki (czerwone: rzeczywiste, zielone: przewidywane)')
+        z1, z2, z3, z4, z5, z6, z7 = st.columns()
+        z1.image('1.png')
+        z2.image('2.png')
+        z3.image('3.png')
+        z4.image('4.png')
+        z5.image('5.png')
+        z6.image('6.png')
+        z7.image('7.png')
+        z1.image('8.png')
+        z2.image('9.png')
+        z3.image('10.png')
+        z4.image('11.png')
+        z5.image('12.png')
+        z6.image('13.png')
+        z7.image('14.png')
 
-        data = {
-    "Precyzja (%)": [0.7062 * 100],
-    "Czułość (%)": [0.8003 * 100],
-    "F1 score (%)": [0.7243 * 100]
-}
-
-        df = pd.DataFrame(data)
-        st.title("Wartości miar jakości dla modelu wykrywania twarzy:")
+        st.write("Wartości miar jakości dla modelu wykrywania twarzy:")
+        precyzja = 0.7062 * 100
+        czulosc = 0.8003 * 100
+        f1 = 0.7243 * 100
+        metrics_table = f"""
+<table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
+  <tr style="background-color:#2a5989; color:white; text-align: center;">
+    <th style="text-align: center;">Precyzja (%)</th>
+    <th style="text-align: center;">Czułość (%)</th>
+    <th style="text-align: center;">F1 score (%)</th>
+  </tr>
+  <tr style="background-color:#6ba6b7; color:black; text-align: center;">
+    <td>{precyzja:.2f}</td>
+    <td>{czulosc:.2f}</td>
+    <td>{f1:.2f}</td>
+  </tr>
+</table>
+"""   
         col1, col2, col3 = st.columns([1,3,1])
-        col2.table(df.style.format("{:.2f}"))
+        col2.markdown(metrics_table, unsafe_allow_html=True)
         st.markdown('# 6. Zapisanie modelu')
         st.markdown("""
 ```python
