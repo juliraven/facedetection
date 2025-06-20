@@ -894,11 +894,11 @@ with tabs[2]:
                     frames.append(frame.convert("RGB"))
                     delays.append(max(20, frame.info.get("duration", 100)))  # ms
 
-                out_path = "processed_gif_output.mp4"
                 width, height = frames[0].size
                 fps = 1000 / np.mean(delays)
-                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                out = cv2.VideoWriter(out_path, fourcc, fps, (width, height))
+
+                temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+                out = cv2.VideoWriter(temp_video_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
 
                 for frame in frames:
                     frame_np = np.array(frame)[:, :, ::-1].copy()
@@ -913,16 +913,18 @@ with tabs[2]:
             for (x1, y1, x2, y2) in boxes
         ]
 
-                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
-                        if score > 0.5:
-                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
+                    if score > 0.5:
+                        cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     out.write(frame_np)
 
                 out.release()
 
-                st.video(out_path)
+                with open(temp_video_file.name, "rb") as f:
+                    video_bytes = f.read()
 
+                st.video(BytesIO(video_bytes))
 
             else:
                 cap = cv2.VideoCapture(path)
