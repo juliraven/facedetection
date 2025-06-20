@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import time
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
@@ -824,11 +825,10 @@ with tabs[2]:
 
             col = st.columns([1,2,1])
             col[1].image(image_np, use_container_width=True)
-
+        
     elif option == "wideo/GIF":
-        import time
         m1, m2, m3 = st.columns([1, 3, 1])
-        m2.write("Wgraj plik wideo/GIF l ub wybierz przykład:")
+        m2.write("Wgraj plik wideo/GIF lub wybierz przykład:")
         st.markdown(
         """
         <style>
