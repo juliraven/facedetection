@@ -115,6 +115,22 @@ import torch.optim as optim
 from tqdm import tqdm
 """)
         st.markdown('## 1.2 Parsowanie pliku adnotacji WIDER Face')
+st.write("""
+Zbiór danych pochodzi ze strony: [https://www.kaggle.com/datasets/iamprateek/wider-face-a-face-detection-dataset](https://www.kaggle.com/datasets/iamprateek/wider-face-a-face-detection-dataset).
+
+Aby móc go wykorzystać w kodzie, należy mieć zapisany folder z plikami o następującej strukturze:
+```python
+data/
+└── wider_face_split/
+    └── wider_face_train_bbx_gt.txt
+└── WIDER_train/
+    └── images/
+        └── 0--Parade
+        └── 1--Handshaking
+        └── ...
+```
+Do uczenia modelu w tym pliku wykorzystałyśmy 40 wybranych folderów.
+""")
         st.markdown("""
 ```python
 def parse_widerface_annotations(ann_file):
