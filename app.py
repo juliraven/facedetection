@@ -778,7 +778,6 @@ with tabs[2]:
         "przykład 2": "img2.jpg",
         "przykład 3": "img3.jpg",
         "przykład 4": "img4.jpg",
-        "przykład 5": "img5.jpg",
     }
 
         selected_example = None
