@@ -349,21 +349,22 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True, collate_fn=co
         train_size = 6526
         val_size = 1398
         test_size = 1400
+        co1, co2, co3 = st.columns([1,3,1])
         datasets_table = f"""
 <table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
-  <tr style="background-color:#2a5989; color:white;">
-    <th>Zbiór uczący</th>
-    <th>Zbiór walidacyjny</th>
-    <th>Zbiór testowy</th>
+  <tr style="background-color:#2a5989; color:white; text-align: center;">
+    <th style="text-align: center;">Zbiór uczący</th>
+    <th style="text-align: center;">Zbiór walidacyjny</th>
+    <th style="text-align: center;">Zbiór testowy</th>
   </tr>
-  <tr style="background-color:#6ba6b7; color:black;">
-    <td style="text-align:center;">{train_size}</td>
-    <td style="text-align:center;">{val_size}</td>
-    <td style="text-align:center;">{test_size}</td>
+  <tr style="background-color:#6ba6b7; color:black; text-align: center;">
+    <td>{train_size}</td>
+    <td>{val_size}</td>
+    <td>{test_size}</td>
   </tr>
 </table>
 """
-        st.markdown(datasets_table, unsafe_allow_html=True)
+        co2.markdown(datasets_table, unsafe_allow_html=True)
         st.markdown('# 4. Przygotowanie modelu i trening')
         st.markdown("""
 ```python
