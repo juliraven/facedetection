@@ -771,11 +771,36 @@ with tabs[2]:
     option = st.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
     if option == "zdjęcie":
-        uploaded_file = st.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
+        m1, m2 = st.columns([1,1])
+        uploaded_file = m1.file_uploader("Wgraj obraz:", type=["jpg", "jpeg", "png", "svg"])
+        example_images = {
+        "Przykład 1": "examples/img1.jpg",
+        "Przykład 2": "examples/img2.jpg",
+        "Przykład 3": "examples/img3.jpg",
+        "Przykład 4": "examples/img4.jpg",
+        "Przykład 5": "examples/img5.jpg",
+    }
+
+        selected_example = None
+
+        with m2:
+            st.write('Wybierz przykład:")
+            for label, path in example_images.items():
+                st.image(path, caption=label, width=150)
+                if st.button(f"Użyj {label}"):
+                    selected_example = path
+
+        image_np = None
+
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
-            image_np = np.array(image)[:, :, ::-1].copy()  # PIL RGB -> OpenCV BGR
+            image_np = np.array(image)
 
+        elif selected_example:
+            image = Image.open(selected_example).convert("RGB")
+            image_np = np.array(image)
+
+        if image_np is not None:
             boxes, scores = detect_faces(image_np)
 
             for (x1, y1, x2, y2), score in zip(boxes, scores):
