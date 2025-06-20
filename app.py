@@ -862,7 +862,7 @@ with tabs[2]:
                     else:
                         st.video(path)
 
-       path = None
+        path = None
         is_gif = False
 
         if media_file is not None:
