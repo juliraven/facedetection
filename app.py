@@ -704,6 +704,11 @@ with tabs[1]:
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
+
+    import torch
+    print("Czy jest dostępne GPU:", torch.cuda.is_available())
+    print("Urządzenie:", device)
+
     
     import os
     import gdown
