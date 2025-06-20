@@ -332,6 +332,9 @@ print(f"\n Uruchomiono na: {'GPU' if device.type == 'cuda' else 'CPU'}")
 train_size = int(0.7 * len(dataset))
 val_size = int(0.15 * len(dataset))
 test_size = len(dataset) - train_size - val_size
+print("Rozmiar zbioru uczącego:", train_size)
+print("Rozmiar zbioru walidacyjnego:", val_size)
+print("Rozmiar zbioru testowego:", test_size)
 
 # podział na zbiory danych — odpowiedzialne za ładowanie danych w batchach:
 train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size])
