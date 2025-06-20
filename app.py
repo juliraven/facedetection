@@ -772,7 +772,7 @@ with tabs[2]:
     option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo", "GIF"])
 
     if option == "zdjęcie":
-        m1, m2 = st.columns([1,3])
+        m1, m2 = st.columns([1,2.5])
         m1.write("Wgraj zdjęcie:")
         st.markdown(
         """
@@ -793,7 +793,7 @@ with tabs[2]:
     }
 
         selected_example = None
-        target_height = 600  
+        target_height = 700  
 
         with m2:
             st.write("Wybierz przykład:")
