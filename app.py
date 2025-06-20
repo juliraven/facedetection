@@ -769,7 +769,7 @@ with tabs[2]:
         return filtered_boxes, filtered_scores
 
     f1, f2, f3 = st.columns([1,2,1])
-    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo\GIF"])
+    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo/GIF"])
 
     if option == "zdjęcie":
         m1, m2, m3 = st.columns([1,3,1])
