@@ -345,18 +345,18 @@ train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, collate_fn=
 val_loader = DataLoader(val_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 """)
-        st.subheader("Rozmiary zbiorów danych:")
+        st.write("Rozmiary zbiorów danych:")
         train_size = 6526
         val_size = 1398
         test_size = 1400
         datasets_table = f"""
-<table style="width:100%; border-collapse: collapse;" border="1">
-  <tr style="background-color:#f2f2f2;">
+<table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
+  <tr style="background-color:#2a5989; color:white;">
     <th>Zbiór uczący</th>
     <th>Zbiór walidacyjny</th>
     <th>Zbiór testowy</th>
   </tr>
-  <tr>
+  <tr style="background-color:#6ba6b7; color:black;">
     <td style="text-align:center;">{train_size}</td>
     <td style="text-align:center;">{val_size}</td>
     <td style="text-align:center;">{test_size}</td>
