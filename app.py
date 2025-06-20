@@ -946,9 +946,9 @@ with tabs[2]:
                     delay = gif.info.get("duration", 100) 
                     time.sleep(delay / 1000.0) 
 
-        gif.seek(gif.tell() + 1)
-except EOFError:
-    pass
+                    gif.seek(gif.tell() + 1)
+            except EOFError:
+                pass
 
 
 
