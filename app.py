@@ -707,6 +707,7 @@ with tabs[2]:
 
     import torch
     print("Czy jest dostępne GPU:", torch.cuda.is_available())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Urządzenie:", device)
 
     
