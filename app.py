@@ -810,9 +810,8 @@ with tabs[2]:
                 if score > 0.5:
                     cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-            image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
             col = st.columns([1,2,1])
-            col[1].image(image_rgb, use_container_width=True)
+            col[1].image(image_np, use_container_width=True)
 
     elif option == "wideo":
         video_file = st.file_uploader("Wgraj plik wideo:", type=["mp4", "avi", "mov"])
