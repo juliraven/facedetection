@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import time
+import tempfile
+from io import BytesIO
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
