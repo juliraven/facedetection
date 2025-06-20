@@ -902,8 +902,7 @@ with tabs[2]:
         gif_file = m2.file_uploader("", type=["gif"])
 
         example_gifs = {
-        "GIF 1": "example1.gif",
-        "GIF 2": "example2.gif",
+        "GIF 1": "example1.gif"
     }
 
         selected_gif_example = None
@@ -917,7 +916,7 @@ with tabs[2]:
                 with col:
                     if st.button(label):
                         selected_gif_example = path
-                    st.image(path, use_column_width=True)
+                    st.image(path, use_container_width=True)
 
         gif_path = None
         if gif_file is not None:
