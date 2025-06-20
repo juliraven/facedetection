@@ -667,14 +667,14 @@ save_all_predictions(model, test_loader, device)
         metrics_table = f"""
 <table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
   <tr style="background-color:#2a5989; color:white; text-align: center;">
-    <th style="text-align: center;">Precyzja (%)</th>
-    <th style="text-align: center;">Czułość (%)</th>
-    <th style="text-align: center;">F1 score (%)</th>
+    <th style="text-align: center;">Precyzja</th>
+    <th style="text-align: center;">Czułość</th>
+    <th style="text-align: center;">F1 score</th>
   </tr>
   <tr style="background-color:#6ba6b7; color:black; text-align: center;">
-    <td>{precyzja:.2f}</td>
-    <td>{czulosc:.2f}</td>
-    <td>{f1:.2f}</td>
+    <td>{precyzja:.2f}%</td>
+<td>{czulosc:.2f}%</td>
+<td>{f1:.2f}%</td>
   </tr>
 </table>
 """   
