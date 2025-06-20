@@ -856,9 +856,9 @@ with tabs[2]:
                         selected_example = path
 
                     if path.endswith(".gif"):
-                        st.image(path, width=120, clamp=True)
+                        st.image(path)
                     else:
-                        st.video(path, width=120, clamp=True)
+                        st.video(path)
 
         path = None
         is_gif = False
