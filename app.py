@@ -172,7 +172,7 @@ print(f'Liczba obrazów: {len(annotations)}')
 print(f'Liczba obrazów z adnotacjami: {len(annotations)}')
 print('Przykład bboxów dla pierwszego obrazu:', list(annotations.values())[0])
 """)
-        st.markdown('## 1.3 Załdaowanie datasetu i ramek')
+        st.markdown('## 1.3 Załadowanie datasetu i ramek')
         st.markdown("""
 ```python
 class WiderFaceDataset(Dataset):
@@ -345,6 +345,25 @@ train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, collate_fn=
 val_loader = DataLoader(val_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True, collate_fn=collate_fn)
 """)
+        st.subheader("Rozmiary zbiorów danych:")
+        train_size = 6526
+        val_size = 1398
+        test_size = 1400
+        datasets_table = f"""
+<table style="width:100%; border-collapse: collapse;" border="1">
+  <tr style="background-color:#f2f2f2;">
+    <th>Zbiór uczący</th>
+    <th>Zbiór walidacyjny</th>
+    <th>Zbiór testowy</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">{train_size}</td>
+    <td style="text-align:center;">{val_size}</td>
+    <td style="text-align:center;">{test_size}</td>
+  </tr>
+</table>
+"""
+        st.markdown(datasets_table, unsafe_allow_html=True)
         st.markdown('# 4. Przygotowanie modelu i trening')
         st.markdown("""
 ```python
