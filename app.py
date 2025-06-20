@@ -915,7 +915,7 @@ with tabs[2]:
                         frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
                         stframe.image(frame_rgb, channels="RGB", use_column_width=True)
 
-                        delay = gif.info.get("duration", 100) / 1000.0
+                        delay = gif.info.get("duration", 50) / 1000.0
                         elapsed = time.time() - start_time
                         time.sleep(max(0.001, delay - elapsed))
 
