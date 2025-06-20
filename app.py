@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
@@ -323,7 +324,7 @@ plt.show()
         st.markdown("""
 ```python
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"\n Uruchomiono na: {'GPU' if device.type == 'cuda' else 'CPU'}")
+print(f"\nUruchomiono na: {'GPU' if device.type == 'cuda' else 'CPU'}")
 """)
         st.markdown('# 3. Podział danych i utworzenie dataloaderów')
         st.markdown("""
@@ -553,15 +554,13 @@ def visualize_predictions_vs_real(model, dataloader, device, score_threshold=0.5
 
                 for box in gt_boxes:
                     x1, y1, x2, y2 = box
-                    rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
-                                             linewidth=2, edgecolor='red', facecolor='none')
+                    rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,linewidth=2, edgecolor='red', facecolor='none')
                     ax.add_patch(rect)
 
                 for box, score in zip(pred_boxes, pred_scores):
                     if score >= score_threshold:
                         x1, y1, x2, y2 = box
-                        rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,
-                                                 linewidth=2, edgecolor='lime', facecolor='none')
+                        rect = patches.Rectangle((x1, y1), x2 - x1, y2 - y1,linewidth=2, edgecolor='lime', facecolor='none')
                         ax.add_patch(rect)
                         ax.text(x1, y1 - 5, f'{score:.2f}', color='lime', fontsize=6)
 
