@@ -1541,11 +1541,11 @@ Nasz model potrafi rozpoznać 8 osób, są to:
     )
         uploaded_file = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
         example_images = {
-    "Przykład 1": "img1.jpg",
-    "Przykład 2": "img2.jpg",
-    "Przykład 3": "img3.jpg",
-    "Przykład 4": "img4.jpg",
-    "Przykład 5": "img5.jpg",
+    "przykład 1": "p1.jpg",
+    "przykład 2": "p2.jpg",
+    "przykład 3": "p3.jpg",
+    "przykład 4": "p4.jpg",
+    "przykład 5": "p5.jpg",
 }
 
     selected_example = None
@@ -1555,6 +1555,14 @@ Nasz model potrafi rozpoznać 8 osób, są to:
         with col:
             img = Image.open(path).convert("RGB")
             st.image(img, use_container_width=True)
+            button_html = f"""
+        <div style="text-align:center;">
+            <button onclick="window.dispatchEvent(new CustomEvent('button_click', {{detail: '{label}'}}))"
+                style="padding: 8px 16px; font-size: 16px; cursor: pointer;">
+                {label}
+            </button>
+        </div>
+        """
             if st.button(label):
                 selected_example = path
 
