@@ -34,25 +34,32 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
+st.markdown("""
     <style>
-    /* Wyśrodkowanie całej listy zakładek */
+    /* Wyśrodkowanie listy zakładek */
     .stTabs [data-baseweb="tab-list"] {
         justify-content: center;
         margin-top: 10px;
     }
-
-    /* Powiększenie czcionki w pojedynczych zakładkach */
+    /* Styl wszystkich zakładek */
     .stTabs [data-baseweb="tab"] {
-        font-size: 50px !important;
+        font-size: 24px !important;
         font-weight: bold;
-        color: black;
+        color: gray;
+        transition: color 0.3s ease;
+    }
+    /* Styl aktywnej zakładki */
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        color: #FF4B4B !important; /* kolor podświetlenia */
+        border-bottom: 3px solid #FF4B4B; /* podkreślenie aktywnej */
+    }
+    /* Podświetlenie na hover */
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #FF7F7F;
+        cursor: pointer;
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 st.markdown(
     """
