@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import tempfile
 from io import BytesIO
+import requests
 
 st.set_page_config(page_title="Wstęp do sieci neuronowych - projekt", layout="wide")
 
