@@ -1515,7 +1515,7 @@ with tabs[2]:
 
         m1, m2, m3 = st.columns([1,3,1])
         m2.markdown("""
-Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
+Nasz model potrafi rozpoznać 8 osób, są to następujące osoby:
 """)
         people = [
     {
