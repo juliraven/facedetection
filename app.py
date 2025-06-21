@@ -1519,7 +1519,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
         people = [
     {
         "name": "Timothee Chalamet",
-        "image": "https://th.bing.com/th/id/OIP.TjQ5WY-g_59tb0v0PmOjnwHaFo?w=184&h=140&c=7&r=0&o=7&pid=1.7&rm=3"
+        "image": "https://th.bing.com/th/id/OIP.ZN-wu5trndQMkvatcLTIdQHaJY?w=184&h=233&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Demi Moore",
@@ -1527,27 +1527,27 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
     },
     {
         "name": "Kieran Culkin",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Kieran_Culkin_2012.jpg/220px-Kieran_Culkin_2012.jpg"
+        "image": "https://th.bing.com/th/id/OIP.M2VpyNYRsjQH0PraaOb3ngHaJ1?w=138&h=183&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Zoe Saldana",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Zoe_Saldana_2016.jpg/220px-Zoe_Saldana_2016.jpg"
+        "image": "https://th.bing.com/th/id/OIP.3r6rf4HhHFN7PvcHgGOIlwHaJ4?w=184&h=245&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Anna Sawai",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Anna_Sawai_at_2023_NYCC.jpg/220px-Anna_Sawai_at_2023_NYCC.jpg"
+        "image": "https://th.bing.com/th/id/OIP.46h0qjAeNS60h6xzKEjJ8gHaIu?w=153&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Hiroyuki Sanada",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Hiroyuki_Sanada_2013.jpg/220px-Hiroyuki_Sanada_2013.jpg"
+        "image": "https://th.bing.com/th/id/OIP.2vTISHqXSX75T1wijVgsTgHaHr?w=167&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Jean Smart",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Jean_Smart_2015.jpg/220px-Jean_Smart_2015.jpg"
+        "image": "https://th.bing.com/th/id/OIP.T93FN9bUl8yQhHb2SkijUwHaJ4?w=126&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Martin Short",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Martin_Short_2014.jpg/220px-Martin_Short_2014.jpg"
+        "image": "https://th.bing.com/th/id/OIP.GfRicDn92DF781NV6DB1gQHaLI?w=120&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
     },
 ]
 
