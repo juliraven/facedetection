@@ -1514,19 +1514,35 @@ with tabs[2]:
                 label = le.inverse_transform([pred_idx])[0]
                 return label
 
+        m1, m2, m3 = st.columns([1,3,1])
+        m2.write("Wgraj zdjęcie lub wybierz przykład:")
+        st.markdown(
+        """
+        <style>
+        .stFileUploader label {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+        uploaded_file = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
+        example_images = {
+    }
         uploaded_file = st.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
 
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
-            st.image(image, caption="Wgrane zdjęcie", use_container_width=True)
-
+            col1, col2, col3, col4 = st.columns([1,2,2,1])
             embedding = get_embedding_from_image(image)
 
             if embedding is not None:
                 predicted_label = predict(embedding)
-                st.success(f"✅ Rozpoznano osobę: **{predicted_label}**")
+                col2.image(image, use_container_width=True)  
+                col3.markdown(f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>", unsafe_allow_html=True)
             else:
-                st.warning("⚠️ Nie rozpoznano twarzy. ")
+                col2.write("") 
+                col3.markdown("<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>", unsafe_allow_html=True)
 
 
 
