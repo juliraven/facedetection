@@ -1540,22 +1540,22 @@ Nasz model potrafi rozpoznać 8 osób, są to:
         uploaded_file1 = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
         
         example_images1 = {
-    "przykład 1": "p1.jpg",
-    "przykład 2": "p2.jpg",
-    "przykład 3": "p3.jpg",
-    "przykład 4": "p4.jpg",
-    "przykład 5": "p5.jpg",
+    "przykład 1": ("p1.jpg","Timothee Chalamet"),
+    "przykład 2": ("p2.jpg","Demi Moore"),
+    "przykład 3": ("p3.jpg","Kim Kardashian"),
+    "przykład 4": ("p4.jpg","Willem Dafoe"),
+    "przykład 5": ("p5.jpg","Tobey Maguire"),
 }
 
         selected_example1 = None
 
         cols = st.columns(5)
-        for col, (label, path) in zip(cols, example_images1.items()):
+        for col, (label, (path, name)) in zip(cols, example_images1.items()):
             with col:
                 if st.button(label, key=f"btn_{label}"):
                     selected_example1 = path
                 img = Image.open(path).convert("RGB")
-                st.image(img, use_container_width=True)
+                st.image(img, caption=name, use_container_width=True)
 
         if selected_example1 is not None:
             image = Image.open(selected_example1).convert("RGB")
