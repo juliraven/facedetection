@@ -87,7 +87,7 @@ with cols[1]:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
         st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
 
-tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj model wykrywania twarzy", "new"])
+tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj model wykrywania twarzy"])
 
 with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy - kod</h1>", unsafe_allow_html=True)
@@ -1553,27 +1553,34 @@ with tabs[2]:
                 if not out.isOpened():
                     st.error("Nie udało się otworzyć pliku do zapisu wideo.")
 
+                frame_count = 0
+                last_boxes = []
+                last_scores = []
+
                 while cap.isOpened():
                     ret, frame = cap.read()
                     if not ret:
                         break
 
                     h, w = frame.shape[:2]
-                    frame_resized = cv2.resize(frame, resize_to)
-                    boxes, scores = detect_faces(frame_resized)
 
-                    scale_x = w / resize_to[0]
-                    scale_y = h / resize_to[1]
-                    boxes_scaled = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
+                    if frame_count % 5 == 0:
+                        frame_resized = cv2.resize(frame, resize_to)
+                        boxes, scores = detect_faces(frame_resized)
+                        scale_x = w / resize_to[0]
+                        scale_y = h / resize_to[1]
+                        last_boxes = [
+                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                for (x1, y1, x2, y2) in boxes
+            ]
+                        last_scores = scores
 
-                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
+                    for (x1, y1, x2, y2), score in zip(last_boxes, last_scores):
                         if score > 0.5:
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
                     out.write(frame)
+                    frame_count += 1
 
                 cap.release()
                 out.release()
@@ -1581,89 +1588,3 @@ with tabs[2]:
                 with open(temp_file.name, "rb") as f:
                     st.video(temp_file.name)
 
-with tabs[3]:
-    import tempfile
-    import cv2
-    import torch
-    import numpy as np
-    import streamlit as st
-
-    def process_video(path, model, device, resize_to=(256,256), score_threshold=0.5):
-        cap = cv2.VideoCapture(path)
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        if fps <= 1.0 or fps != fps:
-            fps = 15.0
-
-        temp_out = tempfile.NamedTemporaryFile(suffix=".avi", delete=False)
-        out = cv2.VideoWriter(temp_out.name, cv2.VideoWriter_fourcc(*'XVID'), fps, (width, height))
-
-        def detect_faces(frame):
-        # Twoja oryginalna funkcja, zmodyfikowana, aby działała na pełnej klatce
-            original_h, original_w = frame.shape[:2]
-            image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image_resized = cv2.resize(image_rgb, resize_to)
-
-            transform = transforms.Compose([
-            transforms.ToPILImage(),
-            transforms.ToTensor()
-        ])
-
-            image_tensor = transform(image_resized).to(device)
-            with torch.no_grad():
-                outputs = model([image_tensor])
-
-            boxes = outputs[0]['boxes'].cpu().numpy()
-            scores = outputs[0]['scores'].cpu().numpy()
-
-            scale_x = original_w / resize_to[0]
-            scale_y = original_h / resize_to[1]
-
-            boxes_scaled = []
-            for box in boxes:
-                x1, y1, x2, y2 = box
-                x1 = int(x1 * scale_x)
-                y1 = int(y1 * scale_y)
-                x2 = int(x2 * scale_x)
-                y2 = int(y2 * scale_y)
-                boxes_scaled.append((x1, y1, x2, y2))
-
-            filtered_boxes = [box for box, score in zip(boxes_scaled, scores) if score > score_threshold]
-            filtered_scores = [score for score in scores if score > score_threshold]
-
-            return filtered_boxes, filtered_scores
-
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            boxes, scores = detect_faces(frame)
-            for (x1, y1, x2, y2), score in zip(boxes, scores):
-                if score > score_threshold:
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-            out.write(frame)
-
-        cap.release()
-        out.release()
-        return temp_out.name
-
-
-# Przykład użycia w Streamlit:
-
-    media_file = st.file_uploader("Wgraj wideo", type=["mp4", "avi", "mov"])
-
-    if media_file is not None:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.' + media_file.name.split('.')[-1]) as temp_video_file:
-            temp_video_file.write(media_file.read())
-            temp_video_path = temp_video_file.name
-
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model.to(device)
-
-        st.info("Przetwarzanie wideo, proszę czekać...")
-        output_video_path = process_video(temp_video_path, model, device)
-
-        st.video(output_video_path)
