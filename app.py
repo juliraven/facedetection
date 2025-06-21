@@ -1541,21 +1541,60 @@ Nasz model potrafi rozpoznać 8 osób, są to:
     )
         uploaded_file = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
         example_images = {
-    }
+    "Przykład 1": "img1.jpg",
+    "Przykład 2": "img2.jpg",
+    "Przykład 3": "img3.jpg",
+    "Przykład 4": "img4.jpg",
+    "Przykład 5": "img5.jpg",
+}
 
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file).convert("RGB")
-            col1, col2, col3= st.columns([1,2,1])
-            embedding = get_embedding_from_image(image)
+    selected_example = None
 
-            if embedding is not None:
-                predicted_label = predict(embedding)
-                col2.image(image, use_container_width=True)  
-                col2.markdown(f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>", unsafe_allow_html=True)
-            else:
-                col2.image(image, use_container_width=True)
-                col2.markdown("<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>", unsafe_allow_html=True)
+    cols = st.columns(5)
+    for col, (label, path) in zip(cols, example_images.items()):
+        with col:
+            img = Image.open(path).convert("RGB")
+            st.image(img, use_container_width=True)
+            if st.button(label):
+                selected_example = path
 
+    if selected_example is not None:
+        image = Image.open(selected_example).convert("RGB")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        embedding = get_embedding_from_image(image)  
+
+        if embedding is not None:
+            predicted_label = predict(embedding) 
+            col2.image(image, use_container_width=True)
+            col2.markdown(
+            f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>",
+            unsafe_allow_html=True,
+        )
+        else:
+            col2.image(image, use_container_width=True)
+            col2.markdown(
+            "<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>",
+            unsafe_allow_html=True,
+        )
+
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file).convert("RGB")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        embedding = get_embedding_from_image(image)  
+
+        if embedding is not None:
+            predicted_label = predict(embedding) 
+            col2.image(image, use_container_width=True)
+            col2.markdown(
+            f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>",
+            unsafe_allow_html=True,
+        )
+        else:
+            col2.image(image, use_container_width=True)
+            col2.markdown(
+            "<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>",
+            unsafe_allow_html=True,
+        )
 
 
 
