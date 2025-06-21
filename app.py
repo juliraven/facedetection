@@ -1428,9 +1428,9 @@ with tabs[2]:
         with n2:
             cols = st.columns(len(example_images))  
 
-            for col, (label, path) in zip(cols, example_images.items()):
-                with col:
-                    if st.button(f"{label}"):
+            for idx, (label, path) in enumerate(example_images.items()):
+                with cols[idx]:
+                    if st.button(f"{label}", key=f"example_btn_{idx}"):
                         selected_example = path
 
                     img = Image.open(path).convert("RGB")
