@@ -85,7 +85,7 @@ with cols[1]:
     st.markdown("<div id='outer_marker'></div>", unsafe_allow_html=True)
     with styled_container:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
-        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwości przetestowania modeli.')
+        st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwość przetestowania modeli.')
 
 tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj model wykrywania twarzy"])
 
@@ -1314,75 +1314,78 @@ plt.show()
         c2.image('predykcje_nowych_zdjec.svg')
 
 with tabs[2]:
-    st.markdown("<h1 style='text-align: center;'>Testuj model wykrywania twarzy na dowolnym zdjęciu</h1>", unsafe_allow_html=True)
 
-    import os
-    import gdown
-    import torch
-    from torchvision import transforms
-    from torchvision.models.detection import fasterrcnn_resnet50_fpn
-    from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-    import numpy as np
-    import cv2
-    from PIL import Image, ImageSequence
-    import streamlit as st
+    f1, f2, f3 = st.columns([1,3,1])
+    option = f2.selectbox("Wybierz model do przetestowania:", ["wykrywanie twarzy", "rozpoznawanie twarzy"])
 
-    def download_from_gdrive(file_id, output_path):
-        url = f"https://drive.google.com/uc?id={file_id}"
-        if not os.path.exists(output_path):
-            gdown.download(url, output_path, quiet=False)
+    if option == "wykrywanie twarzy":
+        st.markdown("<h1 style='text-align: center;'>Testuj model wykrywania twarzy na dowolnym zdjęciu</h1>", unsafe_allow_html=True)
 
-    model_file_id = "1535WMpVQNTlCGyPtE23kOg1duZXFLhen"
-    model_path = "model-facedetect.pth"
-    download_from_gdrive(model_file_id, model_path)
+        import os
+        import gdown
+        import torch
+        from torchvision import transforms
+        from torchvision.models.detection import fasterrcnn_resnet50_fpn
+        from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+        import numpy as np
+        import cv2
+        from PIL import Image, ImageSequence
+        import streamlit as st
 
-    model = fasterrcnn_resnet50_fpn(weights=None)
-    in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2) 
+        def download_from_gdrive(file_id, output_path):
+            url = f"https://drive.google.com/uc?id={file_id}"
+            if not os.path.exists(output_path):
+                gdown.download(url, output_path, quiet=False)
 
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    model.eval()
+        model_file_id = "1535WMpVQNTlCGyPtE23kOg1duZXFLhen"
+        model_path = "model-facedetect.pth"
+        download_from_gdrive(model_file_id, model_path)
 
-    def detect_faces(image_np):
-        original_h, original_w = image_np.shape[:2]
-        image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-        image_resized = cv2.resize(image_rgb, (256, 256))
+        model = fasterrcnn_resnet50_fpn(weights=None)
+        in_features = model.roi_heads.box_predictor.cls_score.in_features
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2) 
+
+        model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+        model.eval()
+
+        def detect_faces(image_np):
+            original_h, original_w = image_np.shape[:2]
+            image_rgb = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+            image_resized = cv2.resize(image_rgb, (256, 256))
     
-        transform = transforms.Compose([
-            transforms.ToPILImage(),
-            transforms.ToTensor()
+            transform = transforms.Compose([
+                transforms.ToPILImage(),
+                transforms.ToTensor()
     ])
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        image_tensor = transform(image_resized).to(device)
-        with torch.no_grad():
-            outputs = model([image_tensor])
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            image_tensor = transform(image_resized).to(device)
+            with torch.no_grad():
+                outputs = model([image_tensor])
     
-        boxes = outputs[0]['boxes'].cpu().numpy()
-        scores = outputs[0]['scores'].cpu().numpy()
+            boxes = outputs[0]['boxes'].cpu().numpy()
+            scores = outputs[0]['scores'].cpu().numpy()
     
-        scale_x = original_w / 256
-        scale_y = original_h / 256
+            scale_x = original_w / 256
+            scale_y = original_h / 256
     
-        boxes_scaled = []
-        for box in boxes:
-            x1, y1, x2, y2 = box
-            x1 = int(x1 * scale_x)
-            y1 = int(y1 * scale_y)
-            x2 = int(x2 * scale_x)
-            y2 = int(y2 * scale_y)
-            boxes_scaled.append((x1, y1, x2, y2))
+            boxes_scaled = []
+            for box in boxes:
+                x1, y1, x2, y2 = box
+                x1 = int(x1 * scale_x)
+                y1 = int(y1 * scale_y)
+                x2 = int(x2 * scale_x)
+                y2 = int(y2 * scale_y)
+                boxes_scaled.append((x1, y1, x2, y2))
     
-        filtered_boxes = [box for box, score in zip(boxes_scaled, scores) if score > 0.5]
-        filtered_scores = [score for score in scores if score > 0.5]
+            filtered_boxes = [box for box, score in zip(boxes_scaled, scores) if score > 0.5]
+            filtered_scores = [score for score in scores if score > 0.5]
     
-        return filtered_boxes, filtered_scores
+            return filtered_boxes, filtered_scores
 
-    f1, f2, f3 = st.columns([1,2,1])
-
-    m1, m2, m3 = st.columns([1,3,1])
-    m2.write("Wgraj zdjęcie lub wybierz przykład:")
-    st.markdown(
+        m1, m2, m3 = st.columns([1,3,1])
+        m2.write("Wgraj zdjęcie lub wybierz przykład:")
+        st.markdown(
         """
         <style>
         .stFileUploader label {
@@ -1392,45 +1395,45 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
-    uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
-    example_images = {
+        uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
+        example_images = {
         "przykład 1": "img1.jpg",
         "przykład 2": "img2.jpg",
         "przykład 3": "img3.jpg",
         "przykład 4": "img4.jpg",
     }
 
-    selected_example = None
+        selected_example = None
 
-    n1, n2, n3 = st.columns([1,5,1])
-    with n2:
-        cols = st.columns(len(example_images))  
+        n1, n2, n3 = st.columns([1,5,1])
+        with n2:
+            cols = st.columns(len(example_images))  
 
-        for col, (label, path) in zip(cols, example_images.items()):
-            with col:
-                if st.button(f"{label}"):
-                    selected_example = path
+            for col, (label, path) in zip(cols, example_images.items()):
+                with col:
+                    if st.button(f"{label}"):
+                        selected_example = path
 
-                img = Image.open(path).convert("RGB")
-                st.image(img, use_container_width=True)
+                    img = Image.open(path).convert("RGB")
+                    st.image(img, use_container_width=True)
 
-    image_np = None
+        image_np = None
 
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
-        image_np = np.array(image)
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file).convert("RGB")
+            image_np = np.array(image)
 
-    elif selected_example:
-        image = Image.open(selected_example).convert("RGB")
-        image_np = np.array(image)
+        elif selected_example:
+            image = Image.open(selected_example).convert("RGB")
+            image_np = np.array(image)
 
-    if image_np is not None:
-        boxes, scores = detect_faces(image_np)
+        if image_np is not None:
+            boxes, scores = detect_faces(image_np)
 
-        for (x1, y1, x2, y2), score in zip(boxes, scores):
-            if score > 0.5:
-                cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            for (x1, y1, x2, y2), score in zip(boxes, scores):
+                if score > 0.5:
+                    cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-        col = st.columns([1,2,1])
-        col[1].image(image_np, use_container_width=True)
+            col = st.columns([1,2,1])
+            col[1].image(image_np, use_container_width=True)
     
