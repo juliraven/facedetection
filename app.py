@@ -1219,9 +1219,25 @@ plt.xticks(fontsize=8)
 plt.yticks(fontsize=8)
 plt.show()
 """)
-        c1, c2 = st.columns([2,2])
-        c1.image('macierz_pomylek_uczacy.svg')
-        c2.image('macierz_pomylek_testowy.svg')
+        c1, c2, c3, c4 = st.columns([0.1, 2, 2, 0.1])
+        c2.image('macierz_pomylek_uczacy.svg')
+        c3.image('macierz_pomylek_testowy.svg')
+        tr_ucz = 0.99
+        tr_test = 0.97
+        metrics_table = f"""
+<table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
+  <tr style="background-color:#2a5989; color:white; text-align: center;">
+    <th style="text-align: center;">Trafność - zbiór uczący</th>
+    <th style="text-align: center;">Trafność - zbiór tetsowy</th>
+  </tr>
+  <tr style="background-color:#6ba6b7; color:black; text-align: center;">
+    <td>{tr_ucz:.2f}%</td>
+<td>{tr_test:.2f}%</td>
+  </tr>
+</table>
+"""   
+        col1, col2, col3 = st.columns([1,3,1])
+        col2.markdown(metrics_table, unsafe_allow_html=True)
         st.markdown('# 5. Wyświetlenie przykładowych twarzy wykrytych dla każdej klasy')
         st.markdown("""
 ```python
@@ -1257,7 +1273,7 @@ plt.subplots_adjust(left=0.01, right=0.99, wspace=0.3, hspace=0.3)
 plt.show()
 """)
         c1, c2, c3 = st.columns([1,3,1])
-        c2.image('przykladowe_zdjecia_detekcja_twarzyy.svg')
+        c2.image('przykladowe_zdjecia_detekcja_twarzy.svg')
         st.markdown('# 6. Predykcja nowych zdjęć')
         st.markdown("""
 ```python
