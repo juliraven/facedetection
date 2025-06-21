@@ -1551,12 +1551,32 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
     },
 ]
 
+        def process_image(url, target_height=180):
+            response = requests.get(url)
+            img = Image.open(BytesIO(response.content)).convert("RGB")
+
+            ratio = target_height / img.height
+            new_width = int(img.width * ratio)
+            img = img.resize((new_width, target_height), Image.LANCZOS)
+
+            target_width = 120  # ustalona szerokość
+            if new_width > target_width:
+                left = (new_width - target_width) // 2
+                img = img.crop((left, 0, left + target_width, target_height))
+            else:
+                new_img = Image.new("RGB", (target_width, target_height), (255, 255, 255))
+                new_img.paste(img, ((target_width - new_width) // 2, 0))
+                img = new_img
+
+            return img
+
         with m2:
             cols = st.columns(len(people))
 
             for col, person in zip(cols, people):
                 with col:
-                    st.image(person["image"], use_container_width=True)
+                    img = process_image(person["image"])
+                    st.image(img, use_container_width=True)
                     st.caption(person["name"])
 
         m2.write("Wgraj zdjęcie lub wybierz przykład:")
