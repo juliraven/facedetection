@@ -1441,16 +1441,13 @@ with tabs[2]:
         st.markdown("<h1 style='text-align: center;'>Testuj model rozpoznawania twarzy na zdjęciu</h1>", unsafe_allow_html=True)
 
         import os
-        import gdown
         import torch
-        from torchvision import transforms
-        from torchvision.models.detection import fasterrcnn_resnet50_fpn
-        from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-        import numpy as np
-        import cv2
-        from PIL import Image, ImageSequence
+        import joblib
         import streamlit as st
+        import numpy as np
+        from PIL import Image
         import torch.nn as nn
+        from facenet_pytorch import MTCNN, InceptionResnetV1
 
         class ClassifierNN(nn.Module):
             def __init__(self, input_size, num_classes):
@@ -1469,13 +1466,26 @@ with tabs[2]:
                 return self.net(x)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        model = ClassifierNN(input_size=512, num_classes=8)  # podaj liczbę klas
+
+        model = ClassifierNN(input_size=512, num_classes=8)  # Podaj liczbę klas zgodnie z trenowaniem
         model.load_state_dict(torch.load("face_classifier.pth", map_location=device))
         model.to(device)
         model.eval()
 
-        import joblib
         le = joblib.load("label_encoder.pkl")
+
+        mtcnn = MTCNN(image_size=160, margin=20, min_face_size=40, device=device)
+        resnet = InceptionResnetV1(pretrained='vggface2').eval().to(device)
+
+        def get_embedding_from_image(pil_image):
+            face = mtcnn(pil_image)
+            if face is not None:
+                face = face.unsqueeze(0).to(device)
+                with torch.no_grad():
+                    embedding = resnet(face)
+                return embedding.squeeze().cpu().numpy()
+            else:
+                return None
 
         def predict(embedding):
             with torch.no_grad():
@@ -1485,19 +1495,22 @@ with tabs[2]:
                 label = le.inverse_transform([pred_idx])[0]
                 return label
 
+        st.title("🎭 Rozpoznawanie tożsamości na podstawie twarzy")
+
         uploaded_file = st.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
 
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
             st.image(image, caption="Wgrane zdjęcie", use_container_width=True)
 
-            embedding = get_embedding(image)
+            embedding = get_embedding_from_image(image)
 
             if embedding is not None:
                 predicted_label = predict(embedding)
                 st.success(f"✅ Rozpoznano osobę: **{predicted_label}**")
             else:
-                st.warning("⚠️ Nie udało się uzyskać embeddingu. Upewnij się, że na zdjęciu jest widoczna jedna twarz.")
+                st.warning("⚠️ Nie wykryto twarzy. Upewnij się, że zdjęcie zawiera wyraźną jedną twarz.")
+
 
 
 
