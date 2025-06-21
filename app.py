@@ -1429,7 +1429,7 @@ with tabs[2]:
             cols = st.columns(len(example_images))  
             for col, (label, path) in zip(cols, example_images.items()):
                 with col:
-                    if st.button(label, key=f"btn_{label}"):  
+                    if st.button(label, key=f"detbtn_{label}"):  
                         selected_example = path
                     img = Image.open(path).convert("RGB")
                     st.image(img, use_container_width=True)
