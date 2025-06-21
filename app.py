@@ -1428,13 +1428,12 @@ with tabs[2]:
         with n2:
             cols = st.columns(len(example_images))  
 
-            for idx, (label, path) in enumerate(example_images.items()):
-                with cols[idx]:
-                    if st.button(f"{label}", key=f"example_btn_{idx}"):
-                        selected_example = path
-
-                    img = Image.open(path).convert("RGB")
-                    st.image(img, use_container_width=True)
+            for col, (label, path) in zip(cols, example_images.items()):
+            with col:
+                if st.button(label, key=label):  
+                    selected_example = path
+                img = Image.open(path).convert("RGB")
+                st.image(img, use_container_width=True)
 
         image_np = None
 
