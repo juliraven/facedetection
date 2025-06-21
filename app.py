@@ -1551,12 +1551,13 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
     },
 ]
 
-        cols = st.columns(len(people))
+        with m2:
+            cols = st.columns(len(people))
 
-        for col, person in zip(cols, people):
-            with col:
-                st.image(person["image"], use_container_width=True)
-                st.caption(person["name"])
+            for col, person in zip(cols, people):
+                with col:
+                    st.image(person["image"], use_container_width=True)
+                    st.caption(person["name"])
 
         m2.write("Wgraj zdjęcie lub wybierz przykład:")
         st.markdown(
@@ -1569,7 +1570,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
         """,
         unsafe_allow_html=True
     )
-        uploaded_file1 = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
+        uploaded_file1 = m2.file_uploader("", type=["jpg", "jpeg", "png"])
         
         example_images1 = {
     "przykład 1": ("p1.jpg","Timothee Chalamet"),
