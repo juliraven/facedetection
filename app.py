@@ -1450,5 +1450,59 @@ with tabs[2]:
         import cv2
         from PIL import Image, ImageSequence
         import streamlit as st
+        import torch.nn as nn
+
+        class ClassifierNN(nn.Module):
+            def __init__(self, input_size, num_classes):
+                super(ClassifierNN, self).__init__()
+                self.net = nn.Sequential(
+            nn.Linear(input_size, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, num_classes)
+        )
+
+            def forward(self, x):
+                return self.net(x)
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model = ClassifierNN(input_size=512, num_classes=8)  # podaj liczbę klas
+        model.load_state_dict(torch.load("face_classifier.pth", map_location=device))
+        model.to(device)
+        model.eval()
+
+        import joblib
+        le = joblib.load("label_encoder.pkl")
+
+        def predict(embedding):
+            with torch.no_grad():
+                tensor = torch.tensor(embedding, dtype=torch.float32).unsqueeze(0).to(device)
+                output = model(tensor)
+                pred_idx = output.argmax(dim=1).item()
+                label = le.inverse_transform([pred_idx])[0]
+                return label
+
+        uploaded_file = st.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
+
+        if uploaded_file is not None:
+            image = Image.open(uploaded_file).convert("RGB")
+            st.image(image, caption="Wgrane zdjęcie", use_container_width=True)
+
+            embedding = get_embedding(image)
+
+            if embedding is not None:
+                predicted_label = predict(embedding)
+                st.success(f"✅ Rozpoznano osobę: **{predicted_label}**")
+            else:
+                st.warning("⚠️ Nie udało się uzyskać embeddingu. Upewnij się, że na zdjęciu jest widoczna jedna twarz.")
+
+
+
+        
+
+
 
     
