@@ -1222,8 +1222,8 @@ plt.show()
         c1, c2, c3, c4 = st.columns([0.1, 2, 2, 0.1])
         c2.image('macierz_pomylek_uczacy.svg')
         c3.image('macierz_pomylek_testowy.svg')
-        tr_ucz = 0.99
-        tr_test = 0.97
+        tr_ucz = 0.99 * 100
+        tr_test = 0.97 * 100
         metrics_table = f"""
 <table style="width:100%; border-collapse: collapse; font-size:16px;" border="1">
   <tr style="background-color:#2a5989; color:white; text-align: center;">
