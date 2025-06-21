@@ -1515,6 +1515,19 @@ with tabs[2]:
                 return label
 
         m1, m2, m3 = st.columns([1,3,1])
+        m2.markdown("""
+Nasz model potrafi rozpoznać 8 osób, są to:
+
+- Timothee Chalamet
+- Demi Moore
+- Kieran Culkin
+- Zoe Saldana
+- Anna Sawai
+- Hiroyuki Sanada
+- Jean Smart
+- Martin Short.
+""")
+
         m2.write("Wgraj zdjęcie lub wybierz przykład:")
         st.markdown(
         """
@@ -1529,7 +1542,6 @@ with tabs[2]:
         uploaded_file = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
         example_images = {
     }
-        uploaded_file = st.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
 
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
