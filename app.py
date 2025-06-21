@@ -1545,16 +1545,16 @@ Nasz model potrafi rozpoznać 8 osób, są to:
 
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
-            col1, col2, col3, col4 = st.columns([1,2,2,1])
+            col1, col2, col3= st.columns([1,2,1])
             embedding = get_embedding_from_image(image)
 
             if embedding is not None:
                 predicted_label = predict(embedding)
                 col2.image(image, use_container_width=True)  
-                col3.markdown(f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>", unsafe_allow_html=True)
+                col2.markdown(f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>", unsafe_allow_html=True)
             else:
                 col2.write("") 
-                col3.markdown("<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>", unsafe_allow_html=True)
+                col2.markdown("<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>", unsafe_allow_html=True)
 
 
 
