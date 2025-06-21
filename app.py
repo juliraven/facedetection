@@ -1446,14 +1446,18 @@ with tabs[2]:
             image_np = np.array(image)
 
         if image_np is not None:
+            face_detected = False
             boxes, scores = detect_faces(image_np)
 
             for (x1, y1, x2, y2), score in zip(boxes, scores):
                 if score > 0.5:
                     cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    face_detected = True
 
             col = st.columns([1,2,1])
             col[1].image(image_np, use_container_width=True)
+            if not face_detected:
+                st.info("⚠️ Nie wykryto żadnej twarzy na zdjęciu.")
 
     if option == "rozpoznawanie twarzy":
         st.markdown("<h1 style='text-align: center;'>Testuj model rozpoznawania twarzy na zdjęciu</h1>", unsafe_allow_html=True)
