@@ -50,14 +50,14 @@ st.markdown("""
         border-radius: 8px;
         transition: background-color 0.3s ease, color 0.3s ease;
     }
-    /* Styl aktywnej zakładki — kolorowe tło */
+    /* Styl aktywnej zakładki — czerwone tło */
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #4caf50;  /* zielone tło */
+        background-color: #e63946;  /* czerwone tło */
         color: white !important;    /* tekst na biało */
     }
     /* Podświetlenie na hover (nieaktywne) */
     .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
-        background-color: #a5d6a7;
+        background-color: #f1a1a8;
         color: black;
         cursor: pointer;
     }
