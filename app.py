@@ -28,7 +28,7 @@ st.markdown(
     </style>
     
     <div style="text-align: center;">
-        <h1>Wykrywanie i rozpoznwanie twarzy</h1>
+        <h1>Wykrywanie i rozpozanwanie twarzy</h1>
     </div>
     """, 
     unsafe_allow_html=True
@@ -1314,7 +1314,7 @@ plt.show()
         c2.image('predykcje_nowych_zdjec.svg')
 
 with tabs[2]:
-    st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Testuj model wykrywania twarzy na dowolnym zdjęciu</h1>", unsafe_allow_html=True)
 
     import os
     import gdown
