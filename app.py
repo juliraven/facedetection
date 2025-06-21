@@ -1550,14 +1550,6 @@ Nasz model potrafi rozpoznać 8 osób, są to:
 
     selected_example = None
 
-    button_html = f"""
-        <div style="text-align:center;">
-            <button onclick="window.dispatchEvent(new CustomEvent('button_click', {{detail: '{label}'}}))"
-                style="padding: 8px 16px; font-size: 16px; cursor: pointer;">
-                {label}
-            </button>
-        </div>
-        """
     cols = st.columns(5)
     for col, (label, path) in zip(cols, example_images.items()):
         with col:
