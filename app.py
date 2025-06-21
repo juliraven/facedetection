@@ -1436,4 +1436,19 @@ with tabs[2]:
 
             col = st.columns([1,2,1])
             col[1].image(image_np, use_container_width=True)
+
+    if option == "rozpoznawanie twarzy":
+        st.markdown("<h1 style='text-align: center;'>Testuj model rozpoznawania twarzy na zdjęciu</h1>", unsafe_allow_html=True)
+
+        import os
+        import gdown
+        import torch
+        from torchvision import transforms
+        from torchvision.models.detection import fasterrcnn_resnet50_fpn
+        from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+        import numpy as np
+        import cv2
+        from PIL import Image, ImageSequence
+        import streamlit as st
+
     
