@@ -1519,7 +1519,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
         people = [
     {
         "name": "Timothee Chalamet",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Timoth%C3%A9e_Chalamet_2019.jpg/220px-Timoth%C3%A9e_Chalamet_2019.jpg"
+        "image": "https://th.bing.com/th/id/OIP.ZN-wu5trndQMkvatcLTIdQHaJY?w=184&h=233&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Demi Moore",
