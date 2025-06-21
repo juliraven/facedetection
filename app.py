@@ -1509,14 +1509,10 @@ with tabs[2]:
                 width, height = frames[0].size
                 fps = 1000 / np.mean(delays)
 
-                temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
-                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
-                
-                if not out.isOpened():
-                    st.error("Nie udało się otworzyć pliku do zapisu GIF-a jako wideo.")
+                placeholder = st.empty()
 
                 for frame in frames:
-                    frame_np = np.array(frame)[:, :, ::-1].copy()
+                    frame_np = np.array(frame)[:, :, ::-1].copy()  # PIL RGB -> BGR dla OpenCV
                     h, w = frame_np.shape[:2]
                     frame_resized = cv2.resize(frame_np, resize_to)
                     boxes, scores = detect_faces(frame_resized)
@@ -1524,20 +1520,18 @@ with tabs[2]:
                     scale_x = w / resize_to[0]
                     scale_y = h / resize_to[1]
                     boxes_scaled = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
+                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                for (x1, y1, x2, y2) in boxes
+            ]
 
                     for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
                         if score > 0.5:
                             cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    out.write(frame_np)
+                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
+                    placeholder.image(frame_rgb)
 
-                out.release()
-
-                with open(temp_file.name, "rb") as f:
-                    st.video(BytesIO(f.read()))
+                    st.sleep(np.mean(delays) / 1000)
 
             else:
                 cap = cv2.VideoCapture(path)
@@ -1547,11 +1541,7 @@ with tabs[2]:
                 if fps <= 1.0 or fps != fps:
                     fps = 15.0
 
-                temp_file = tempfile.NamedTemporaryFile(suffix=".avi", delete=False)
-                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'XVID'), fps, (width, height))
-
-                if not out.isOpened():
-                    st.error("Nie udało się otworzyć pliku do zapisu wideo.")
+                placeholder = st.empty()
 
                 frame_count = 0
                 last_boxes = []
@@ -1570,21 +1560,19 @@ with tabs[2]:
                         scale_x = w / resize_to[0]
                         scale_y = h / resize_to[1]
                         last_boxes = [
-                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                for (x1, y1, x2, y2) in boxes
-            ]
+                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
+                    for (x1, y1, x2, y2) in boxes
+                ]
                         last_scores = scores
 
                     for (x1, y1, x2, y2), score in zip(last_boxes, last_scores):
                         if score > 0.5:
                             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                    out.write(frame)
+                    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    placeholder.image(frame_rgb, channels="RGB")
+
                     frame_count += 1
+                    st.sleep(1.0 / fps)  
 
                 cap.release()
-                out.release()
-
-                with open(temp_file.name, "rb") as f:
-                    st.video(temp_file.name)
-
