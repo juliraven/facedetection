@@ -87,7 +87,17 @@ with cols[1]:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
         st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwość przetestowania modeli.')
 
-tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj model wykrywania twarzy"])
+st.markdown("""
+    <style>
+    /* Styl dla zakładek */
+    .stTabs [data-baseweb="tab"] {
+        font-size: 20px;
+        font-weight: bold;
+        color: #3366cc;
+    }
+    </style>
+""", unsafe_allow_html=True)
+tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj modele"])
 
 with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy - kod</h1>", unsafe_allow_html=True)
@@ -1495,8 +1505,6 @@ with tabs[2]:
                 label = le.inverse_transform([pred_idx])[0]
                 return label
 
-        st.title("🎭 Rozpoznawanie tożsamości na podstawie twarzy")
-
         uploaded_file = st.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
 
         if uploaded_file is not None:
@@ -1509,7 +1517,7 @@ with tabs[2]:
                 predicted_label = predict(embedding)
                 st.success(f"✅ Rozpoznano osobę: **{predicted_label}**")
             else:
-                st.warning("⚠️ Nie wykryto twarzy. Upewnij się, że zdjęcie zawiera wyraźną jedną twarz.")
+                st.warning("⚠️ Nie rozpoznano twarzy. ")
 
 
 
