@@ -37,10 +37,17 @@ st.markdown(
 st.markdown(
     """
     <style>
+    /* Wyśrodkowanie całej listy zakładek */
     .stTabs [data-baseweb="tab-list"] {
         justify-content: center;
-        font-size: 50px;
         margin-top: 10px;
+    }
+
+    /* Powiększenie czcionki w pojedynczych zakładkach */
+    .stTabs [data-baseweb="tab"] {
+        font-size: 50px !important;
+        font-weight: bold;
+        color: black;
     }
     </style>
     """,
