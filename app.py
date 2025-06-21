@@ -91,9 +91,8 @@ st.markdown("""
     <style>
     /* Styl dla zakładek */
     .stTabs [data-baseweb="tab"] {
-        font-size: 20px;
+        font-size: 50px;
         font-weight: bold;
-        color: #3366cc;
     }
     </style>
 """, unsafe_allow_html=True)
