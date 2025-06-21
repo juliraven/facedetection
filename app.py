@@ -1457,7 +1457,10 @@ with tabs[2]:
             col = st.columns([1,2,1])
             col[1].image(image_np, use_container_width=True)
             if not face_detected:
-                col[1].error("⚠️ Nie wykryto żadnej twarzy na zdjęciu.")
+                col[1].markdown(
+            "<div style='text-align: center; color: orange;'>⚠️ Nie wykryto żadnej twarzy na zdjęciu.</div>",
+            unsafe_allow_html=True,
+        )
 
     if option == "rozpoznawanie twarzy":
         st.markdown("<h1 style='text-align: center;'>Testuj model rozpoznawania twarzy na zdjęciu</h1>", unsafe_allow_html=True)
