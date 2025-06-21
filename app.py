@@ -1553,7 +1553,7 @@ Nasz model potrafi rozpoznać 8 osób, są to:
                 col2.image(image, use_container_width=True)  
                 col2.markdown(f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>", unsafe_allow_html=True)
             else:
-                col2.write("") 
+                col2.image(image, use_container_width=True)
                 col2.markdown("<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>", unsafe_allow_html=True)
 
 
