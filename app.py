@@ -1577,8 +1577,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
             for col, person in zip(cols, people):
                 with col:
                     img = process_image(person["image"])
-                    st.image(img, use_container_width=True)
-                    st.caption(person["name"])
+                    st.image(img, use_container_width=True, caption=person["name"])
 
         m2.write("Wgraj zdjęcie lub wybierz przykład:")
         st.markdown(
