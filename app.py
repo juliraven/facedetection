@@ -1423,18 +1423,18 @@ with tabs[2]:
     }
 
         selected_example = None
-
-        n1, n2, n3 = st.columns([1,5,1])
-        with n2:
-            cols = st.columns(len(example_images))  
-            for col, (label, path) in zip(cols, example_images.items()):
-                with col:
-                    if st.button(label, key=f"detbtn_{label}"):  
-                        selected_example = path
-                    img = Image.open(path).convert("RGB")
-                    st.image(img, use_container_width=True)
-
         image_np = None
+
+        if uploaded_file is None:
+            n1, n2, n3 = st.columns([1, 5, 1])
+            with n2:
+                cols = st.columns(len(example_images))  
+                for col, (label, path) in zip(cols, example_images.items()):
+                    with col:
+                        if st.button(label, key=f"detbtn_{label}"):  
+                            selected_example = path
+                        img = Image.open(path).convert("RGB")
+                        st.image(img, use_container_width=True)
 
         if uploaded_file is not None:
             image = Image.open(uploaded_file).convert("RGB")
