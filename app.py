@@ -1523,7 +1523,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
     },
     {
         "name": "Demi Moore",
-        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Demi_Moore_2010.jpg/220px-Demi_Moore_2010.jpg"
+        "image": "https://th.bing.com/th/id/OIP.hFBBNNO_Q5OWl0VtUVvFEgHaHa?w=167&h=180&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Kieran Culkin",
