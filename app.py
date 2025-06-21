@@ -1538,6 +1538,7 @@ Nasz model potrafi rozpoznać 8 osób, są to:
         unsafe_allow_html=True
     )
         uploaded_file1 = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
+        
         example_images1 = {
     "przykład 1": "p1.jpg",
     "przykład 2": "p2.jpg",
@@ -1546,50 +1547,50 @@ Nasz model potrafi rozpoznać 8 osób, są to:
     "przykład 5": "p5.jpg",
 }
 
-    selected_example1 = None
+        selected_example1 = None
 
-    cols = st.columns(5)
-    for col, (label, path) in zip(cols, example_images1.items()):
-        with col:
-            if st.button(label, key=f"btn_{label}"):
-                selected_example1 = path
-            img = Image.open(path).convert("RGB")
-            st.image(img, use_container_width=True)
+        cols = st.columns(5)
+        for col, (label, path) in zip(cols, example_images1.items()):
+            with col:
+                if st.button(label, key=f"btn_{label}"):
+                    selected_example1 = path
+                img = Image.open(path).convert("RGB")
+                st.image(img, use_container_width=True)
 
-    if selected_example1 is not None:
-        image = Image.open(selected_example1).convert("RGB")
-        col1, col2, col3 = st.columns([1, 2, 1])
-        embedding = get_embedding_from_image(image)  
+        if selected_example1 is not None:
+            image = Image.open(selected_example1).convert("RGB")
+            col1, col2, col3 = st.columns([1, 2, 1])
+            embedding = get_embedding_from_image(image)  
 
-        if embedding is not None:
-            predicted_label = predict(embedding) 
-            col2.image(image, use_container_width=True)
-            col2.markdown(
+            if embedding is not None:
+                predicted_label = predict(embedding) 
+                col2.image(image, use_container_width=True)
+                col2.markdown(
             f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>",
             unsafe_allow_html=True,
         )
-        else:
-            col2.image(image, use_container_width=True)
-            col2.markdown(
+            else:
+                col2.image(image, use_container_width=True)
+                col2.markdown(
             "<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>",
             unsafe_allow_html=True,
         )
 
-    if uploaded_file1 is not None:
-        image = Image.open(uploaded_file1).convert("RGB")
-        col1, col2, col3 = st.columns([1, 2, 1])
-        embedding = get_embedding_from_image(image)  
+        if uploaded_file1 is not None:
+            image = Image.open(uploaded_file1).convert("RGB")
+            col1, col2, col3 = st.columns([1, 2, 1])
+            embedding = get_embedding_from_image(image)  
 
-        if embedding is not None:
-            predicted_label = predict(embedding) 
-            col2.image(image, use_container_width=True)
-            col2.markdown(
+            if embedding is not None:
+                predicted_label = predict(embedding) 
+                col2.image(image, use_container_width=True)
+                col2.markdown(
             f"<div style='text-align: center; font-weight: bold; font-size: 20px;'>✅ Rozpoznano osobę: <br> {predicted_label}</div>",
             unsafe_allow_html=True,
         )
-        else:
-            col2.image(image, use_container_width=True)
-            col2.markdown(
+            else:
+                col2.image(image, use_container_width=True)
+                col2.markdown(
             "<div style='text-align: center; color: orange;'>⚠️ Nie rozpoznano twarzy.</div>",
             unsafe_allow_html=True,
         )
