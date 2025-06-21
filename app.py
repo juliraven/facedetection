@@ -28,7 +28,7 @@ st.markdown(
     </style>
     
     <div style="text-align: center;">
-        <h1>Wykrywanie i rozpozanwanie twarzy</h1>
+        <h1>Wykrywanie i rozpoznawanie twarzy</h1>
     </div>
     """, 
     unsafe_allow_html=True
