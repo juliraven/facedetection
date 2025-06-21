@@ -45,20 +45,21 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         font-size: 24px !important;
         font-weight: bold;
-        color: black;
+        color: white;
         padding: 10px 20px;
         border-radius: 8px;
         transition: background-color 0.3s ease, color 0.3s ease;
     }
-    /* Styl aktywnej zakładki — czerwone tło */
+    /* Styl aktywnej zakładki — tło nawiązujące do gradientu */
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #e63946;  /* czerwone tło */
-        color: white !important;    /* tekst na biało */
+        background: rgba(193, 18, 31, 0.8); /* głęboki szkarłat, prawie nieprzezroczysty */
+        box-shadow: 0 0 10px rgba(193, 18, 31, 0.6); /* delikatny cień pasujący do koloru */
+        color: white !important;
     }
-    /* Podświetlenie na hover (nieaktywne) */
+    /* Podświetlenie na hover dla nieaktywnych */
     .stTabs [data-baseweb="tab"]:not([aria-selected="true"]):hover {
-        background-color: #f1a1a8;
-        color: black;
+        background: rgba(160, 30, 40, 0.6); /* ciepła ciemniejsza czerwień */
+        color: white;
         cursor: pointer;
     }
     </style>
