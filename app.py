@@ -1581,7 +1581,7 @@ with tabs[2]:
                 with open(temp_file.name, "rb") as f:
                     st.video(temp_file.name)
 
-with tab[3]:
+with tabs[3]:
     import tempfile
     import cv2
     import torch
