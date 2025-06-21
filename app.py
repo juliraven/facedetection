@@ -106,7 +106,7 @@ with cols[1]:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
         st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwość przetestowania modeli.')
 
-tabs = st.tabs(["Wykrywanie twarzy", "Wykrywanie znanych twarzy", "Testuj modele"])
+tabs = st.tabs(["Wykrywanie twarzy", "Rozpoznawanie znanych twarzy", "Testuj modele"])
 
 with tabs[0]:
     st.markdown("<h1 style='text-align: center;'>Wykrywanie twarzy - kod</h1>", unsafe_allow_html=True)
@@ -711,7 +711,7 @@ torch.save(model, "model-facedetect-full.pth")
         
 
 with tabs[1]:
-    st.markdown("<h1 style='text-align: center;'>Klasyfikacja znanych twarzy - kod</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Rozpoznawanie znanych twarzy - kod</h1>", unsafe_allow_html=True)
     st.markdown('')
 
     styled_container = st.container()
@@ -1519,7 +1519,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
         people = [
     {
         "name": "Timothee Chalamet",
-        "image": "https://th.bing.com/th/id/OIP.ZN-wu5trndQMkvatcLTIdQHaJY?w=184&h=233&c=7&r=0&o=7&pid=1.7&rm=3"
+        "image": "https://th.bing.com/th/id/OIP.TjQ5WY-g_59tb0v0PmOjnwHaFo?w=184&h=140&c=7&r=0&o=7&pid=1.7&rm=3"
     },
     {
         "name": "Demi Moore",
