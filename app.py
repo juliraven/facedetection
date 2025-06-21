@@ -1315,6 +1315,17 @@ plt.show()
 
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
+
+    import subprocess
+
+    try:
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True)
+        st.write("FFmpeg found:")
+        st.text(result.stdout)
+    except Exception as e:
+        st.write("FFmpeg not found:", e)
+
+    
     import os
     import gdown
     import torch
