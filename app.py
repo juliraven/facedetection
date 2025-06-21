@@ -1315,7 +1315,7 @@ plt.show()
 
 with tabs[2]:
 
-    f1, f2, f3 = st.columns([1,3,1])
+    f1, f2, f3 = st.columns([2,1,2])
     option = f2.selectbox("Wybierz model do przetestowania:", ["wykrywanie twarzy", "rozpoznawanie twarzy"])
 
     if option == "wykrywanie twarzy":
