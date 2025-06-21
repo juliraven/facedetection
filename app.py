@@ -1484,7 +1484,7 @@ with tabs[2]:
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model = ClassifierNN(input_size=512, num_classes=8)  # Podaj liczbę klas zgodnie z trenowaniem
+        model = ClassifierNN(input_size=512, num_classes=8) 
         model.load_state_dict(torch.load("face_classifier.pth", map_location=device))
         model.to(device)
         model.eval()
