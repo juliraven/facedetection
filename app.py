@@ -1553,10 +1553,10 @@ Nasz model potrafi rozpoznać 8 osób, są to:
     cols = st.columns(5)
     for col, (label, path) in zip(cols, example_images.items()):
         with col:
+            if st.button(label, key=f"btn_{label}"):
+                selected_example = path
             img = Image.open(path).convert("RGB")
             st.image(img, use_container_width=True)
-            if st.button(label):
-                selected_example = path
 
     if selected_example is not None:
         image = Image.open(selected_example).convert("RGB")
