@@ -1537,8 +1537,8 @@ Nasz model potrafi rozpoznać 8 osób, są to:
         """,
         unsafe_allow_html=True
     )
-        uploaded_file = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
-        example_images = {
+        uploaded_file1 = m2.file_uploader("Wgraj zdjęcie twarzy", type=["jpg", "jpeg", "png"])
+        example_images1 = {
     "przykład 1": "p1.jpg",
     "przykład 2": "p2.jpg",
     "przykład 3": "p3.jpg",
@@ -1546,18 +1546,18 @@ Nasz model potrafi rozpoznać 8 osób, są to:
     "przykład 5": "p5.jpg",
 }
 
-    selected_example = None
+    selected_example1 = None
 
     cols = st.columns(5)
-    for col, (label, path) in zip(cols, example_images.items()):
+    for col, (label, path) in zip(cols, example_images1.items()):
         with col:
             if st.button(label, key=f"btn_{label}"):
-                selected_example = path
+                selected_example1 = path
             img = Image.open(path).convert("RGB")
             st.image(img, use_container_width=True)
 
-    if selected_example is not None:
-        image = Image.open(selected_example).convert("RGB")
+    if selected_example1 is not None:
+        image = Image.open(selected_example1).convert("RGB")
         col1, col2, col3 = st.columns([1, 2, 1])
         embedding = get_embedding_from_image(image)  
 
@@ -1575,8 +1575,8 @@ Nasz model potrafi rozpoznać 8 osób, są to:
             unsafe_allow_html=True,
         )
 
-    if uploaded_file is not None:
-        image = Image.open(uploaded_file).convert("RGB")
+    if uploaded_file1 is not None:
+        image = Image.open(uploaded_file1).convert("RGB")
         col1, col2, col3 = st.columns([1, 2, 1])
         embedding = get_embedding_from_image(image)  
 
