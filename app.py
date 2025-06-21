@@ -1379,12 +1379,10 @@ with tabs[2]:
         return filtered_boxes, filtered_scores
 
     f1, f2, f3 = st.columns([1,2,1])
-    option = f2.selectbox("Wgraj:", ["zdjęcie", "wideo/GIF"])
 
-    if option == "zdjęcie":
-        m1, m2, m3 = st.columns([1,3,1])
-        m2.write("Wgraj zdjęcie lub wybierz przykład:")
-        st.markdown(
+    m1, m2, m3 = st.columns([1,3,1])
+    m2.write("Wgraj zdjęcie lub wybierz przykład:")
+    st.markdown(
         """
         <style>
         .stFileUploader label {
@@ -1394,185 +1392,45 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
-        uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
-        example_images = {
+    uploaded_file = m2.file_uploader("", type=["jpg", "jpeg", "png", "svg"])
+    example_images = {
         "przykład 1": "img1.jpg",
         "przykład 2": "img2.jpg",
         "przykład 3": "img3.jpg",
         "przykład 4": "img4.jpg",
     }
 
-        selected_example = None
+    selected_example = None
 
-        n1, n2, n3 = st.columns([1,5,1])
-        with n2:
-            cols = st.columns(len(example_images))  
+    n1, n2, n3 = st.columns([1,5,1])
+    with n2:
+        cols = st.columns(len(example_images))  
 
-            for col, (label, path) in zip(cols, example_images.items()):
-                with col:
-                    if st.button(f"{label}"):
-                        selected_example = path
+        for col, (label, path) in zip(cols, example_images.items()):
+            with col:
+                if st.button(f"{label}"):
+                    selected_example = path
 
-                    img = Image.open(path).convert("RGB")
-                    st.image(img, use_container_width=True)
+                img = Image.open(path).convert("RGB")
+                st.image(img, use_container_width=True)
 
-        image_np = None
+    image_np = None
 
-        if uploaded_file is not None:
-            image = Image.open(uploaded_file).convert("RGB")
-            image_np = np.array(image)
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file).convert("RGB")
+        image_np = np.array(image)
 
-        elif selected_example:
-            image = Image.open(selected_example).convert("RGB")
-            image_np = np.array(image)
+    elif selected_example:
+        image = Image.open(selected_example).convert("RGB")
+        image_np = np.array(image)
 
-        if image_np is not None:
-            boxes, scores = detect_faces(image_np)
+    if image_np is not None:
+        boxes, scores = detect_faces(image_np)
 
-            for (x1, y1, x2, y2), score in zip(boxes, scores):
-                if score > 0.5:
-                    cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        for (x1, y1, x2, y2), score in zip(boxes, scores):
+            if score > 0.5:
+                cv2.rectangle(image_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-            col = st.columns([1,2,1])
-            col[1].image(image_np, use_container_width=True)
-        
-    elif option == "wideo/GIF":
-        m1, m2, m3 = st.columns([1, 3, 1])
-        m2.write("Wgraj plik wideo/GIF lub wybierz przykład:")
-        st.markdown(
-        """
-        <style>
-        .stFileUploader label {
-            display: none;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-        media_file = m2.file_uploader("", type=["mp4", "avi", "mov", "gif"])
-
-        example_media = {
-        "przykład 1": "example1.gif",
-        "przykład 2": "example2.gif",
-        "przykład 3": "example4.mp4"
-    }
-
-        selected_example = None
-        
-        n1, n2, n3 = st.columns([1, 5, 1])
-        with n2:
-            cols = st.columns(len(example_media))
-            for col, (label, path) in zip(cols, example_media.items()):
-                with col:
-                    if st.button(label):
-                        selected_example = path
-
-                    if path.endswith(".gif"):
-                        st.image(path)
-                    else:
-                        st.video(path)
-
-        path = None
-        is_gif = False
-
-        if media_file is not None:
-            file_ext = media_file.name.split('.')[-1].lower()
-            if file_ext == "gif":
-                is_gif = True
-                path = Image.open(media_file)
-            else:
-                temp_path = f"temp_video.{file_ext}"
-                with open(temp_path, "wb") as f:
-                    f.write(media_file.read())
-                path = temp_path
-        elif selected_example:
-            if selected_example.endswith(".gif"):
-                is_gif = True
-                path = Image.open(selected_example)
-            else:
-                path = selected_example
-
-        if path:
-            resize_to = (256, 256)
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model.to(device)
-
-            if is_gif:
-                gif = path
-                frames = []
-                delays = []
-
-                for frame in ImageSequence.Iterator(gif):
-                    frames.append(frame.convert("RGB"))
-                    delays.append(max(20, frame.info.get("duration", 100)))  # ms
-
-                width, height = frames[0].size
-                fps = 1000 / np.mean(delays)
-
-                placeholder = st.empty()
-
-                for frame in frames:
-                    frame_np = np.array(frame)[:, :, ::-1].copy()  # PIL RGB -> BGR dla OpenCV
-                    h, w = frame_np.shape[:2]
-                    frame_resized = cv2.resize(frame_np, resize_to)
-                    boxes, scores = detect_faces(frame_resized)
-
-                    scale_x = w / resize_to[0]
-                    scale_y = h / resize_to[1]
-                    boxes_scaled = [
-                (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                for (x1, y1, x2, y2) in boxes
-            ]
-
-                    for (x1, y1, x2, y2), score in zip(boxes_scaled, scores):
-                        if score > 0.5:
-                            cv2.rectangle(frame_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-                    frame_rgb = cv2.cvtColor(frame_np, cv2.COLOR_BGR2RGB)
-                    placeholder.image(frame_rgb)
-
-                    st.sleep(np.mean(delays) / 1000)
-
-            else:
-                cap = cv2.VideoCapture(path)
-                width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                fps = cap.get(cv2.CAP_PROP_FPS)
-                if fps <= 1.0 or fps != fps:
-                    fps = 15.0
-
-                placeholder = st.empty()
-
-                frame_count = 0
-                last_boxes = []
-                last_scores = []
-
-                while cap.isOpened():
-                    ret, frame = cap.read()
-                    if not ret:
-                        break
-
-                    h, w = frame.shape[:2]
-
-                    if frame_count % 5 == 0:
-                        frame_resized = cv2.resize(frame, resize_to)
-                        boxes, scores = detect_faces(frame_resized)
-                        scale_x = w / resize_to[0]
-                        scale_y = h / resize_to[1]
-                        last_boxes = [
-                    (int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y))
-                    for (x1, y1, x2, y2) in boxes
-                ]
-                        last_scores = scores
-
-                    for (x1, y1, x2, y2), score in zip(last_boxes, last_scores):
-                        if score > 0.5:
-                            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-                    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    placeholder.image(frame_rgb, channels="RGB")
-
-                    frame_count += 1
-                    st.sleep(1.0 / fps)  
-
-                cap.release()
+        col = st.columns([1,2,1])
+        col[1].image(image_np, use_container_width=True)
+    
