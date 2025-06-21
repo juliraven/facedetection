@@ -16,3 +16,4 @@ st_pages
 streamlit-extras
 openpyxl
 gdown
+facenet-pytorch
