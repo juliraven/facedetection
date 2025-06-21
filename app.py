@@ -1514,17 +1514,49 @@ with tabs[2]:
 
         m1, m2, m3 = st.columns([1,3,1])
         m2.markdown("""
-Nasz model potrafi rozpoznać 8 osób, są to:
-
-- Timothee Chalamet
-- Demi Moore
-- Kieran Culkin
-- Zoe Saldana
-- Anna Sawai
-- Hiroyuki Sanada
-- Jean Smart
-- Martin Short.
+Nasz model potrafi rozpoznać 8 osób, są to następujące oosby:
 """)
+        people = [
+    {
+        "name": "Timothee Chalamet",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Timoth%C3%A9e_Chalamet_2019.jpg/220px-Timoth%C3%A9e_Chalamet_2019.jpg"
+    },
+    {
+        "name": "Demi Moore",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Demi_Moore_2010.jpg/220px-Demi_Moore_2010.jpg"
+    },
+    {
+        "name": "Kieran Culkin",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Kieran_Culkin_2012.jpg/220px-Kieran_Culkin_2012.jpg"
+    },
+    {
+        "name": "Zoe Saldana",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Zoe_Saldana_2016.jpg/220px-Zoe_Saldana_2016.jpg"
+    },
+    {
+        "name": "Anna Sawai",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Anna_Sawai_at_2023_NYCC.jpg/220px-Anna_Sawai_at_2023_NYCC.jpg"
+    },
+    {
+        "name": "Hiroyuki Sanada",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Hiroyuki_Sanada_2013.jpg/220px-Hiroyuki_Sanada_2013.jpg"
+    },
+    {
+        "name": "Jean Smart",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Jean_Smart_2015.jpg/220px-Jean_Smart_2015.jpg"
+    },
+    {
+        "name": "Martin Short",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Martin_Short_2014.jpg/220px-Martin_Short_2014.jpg"
+    },
+]
+
+        cols = st.columns(len(people))
+
+        for col, person in zip(cols, people):
+            with col:
+                st.image(person["image"], use_column_width=True)
+                st.caption(person["name"])
 
         m2.write("Wgraj zdjęcie lub wybierz przykład:")
         st.markdown(
