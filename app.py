@@ -1316,16 +1316,6 @@ plt.show()
 with tabs[2]:
     st.markdown("<h1 style='text-align: center;'>Testuj na zdjęciu/wideo/GIF-ie</h1>", unsafe_allow_html=True)
 
-    import subprocess
-
-    try:
-        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True)
-        st.write("FFmpeg found:")
-        st.text(result.stdout)
-    except Exception as e:
-        st.write("FFmpeg not found:", e)
-
-    
     import os
     import gdown
     import torch
@@ -1557,8 +1547,8 @@ with tabs[2]:
                 if fps <= 1.0 or fps != fps:
                     fps = 15.0
 
-                temp_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
-                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+                temp_file = tempfile.NamedTemporaryFile(suffix=".avi", delete=False)
+                out = cv2.VideoWriter(temp_file.name, cv2.VideoWriter_fourcc(*'XVID'), fps, (width, height))
 
                 if not out.isOpened():
                     st.error("Nie udało się otworzyć pliku do zapisu wideo.")
@@ -1589,4 +1579,4 @@ with tabs[2]:
                 out.release()
 
                 with open(temp_file.name, "rb") as f:
-                    st.video(BytesIO(f.read()))
+                    st.video(temp_file.name)
