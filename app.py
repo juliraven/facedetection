@@ -39,6 +39,7 @@ st.markdown(
     <style>
     .stTabs [data-baseweb="tab-list"] {
         justify-content: center;
+        font-size: 50px;
         margin-top: 10px;
     }
     </style>
@@ -87,15 +88,6 @@ with cols[1]:
         st.markdown("<div id='gradient_container_marker'></div>", unsafe_allow_html=True)
         st.write('Projekt polegał na zbudowaniu sieci neuronowej, która potrafi wykrywać ludzkie twarze na zdjęciach, a także na filmach/GIF-ach. Zbudowałyśmy także model rozpoznający (klasyfikujący) konkretne twarze, który wykorzystuje wiedzę na temat wykrywania dowolnych twarzy i jest rozszerzeniem zagadnienia detekcji twarzy. Na kolejnych zakładkach znajdują się kody źródłowe napisane w Pythonie w ramach projektu, a także możliwość przetestowania modeli.')
 
-st.markdown("""
-    <style>
-    /* Styl dla zakładek */
-    .stTabs [data-baseweb="tab"] {
-        font-size: 50px; !important;
-        font-weight: bold;
-    }
-    </style>
-""", unsafe_allow_html=True)
 tabs = st.tabs(["Wykrywanie twarzy", "Klasyfikacja znanych twarzy", "Testuj modele"])
 
 with tabs[0]:
