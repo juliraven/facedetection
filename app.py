@@ -394,7 +394,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=True, collate_fn=co
 weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT # wczytanie wag dla modelu Faster R-CNN z ResNet50 + FPN
 model = fasterrcnn_resnet50_fpn(weights=weights) 
 
-num_classes = 2  # ustawienie liczbęy klas — 1 klasa + tło 
+num_classes = 2  # ustawienie liczby klas — 1 klasa + tło 
 in_features = model.roi_heads.box_predictor.cls_score.in_features # pobranie liczby wejściowych cech
 model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes) # zamiana domyślnej warstwy na taką, która obsługuje 2 klasy
 
@@ -1567,7 +1567,7 @@ Nasz model potrafi rozpoznać 8 osób, są to następujące osoby:
             new_width = int(img.width * ratio)
             img = img.resize((new_width, target_height), Image.LANCZOS)
 
-            target_width = 120  # ustalona szerokość
+            target_width = 120  
             if new_width > target_width:
                 left = (new_width - target_width) // 2
                 img = img.crop((left, 0, left + target_width, target_height))
